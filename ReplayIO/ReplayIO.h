@@ -10,4 +10,18 @@
 
 @interface ReplayIO : NSObject
 
+@property (readonly, nonatomic, strong) NSString* apiKey;
+@property (readonly, nonatomic, strong) NSString* userAlias;
+
+// ReplayIO singleton object
++ (ReplayIO *)sharedTracker;
+
+// Instantiation
++ (void)trackWithAPIKey:(NSString *)apiKey;
+
+// Public methods
++ (void)trackEvent:(NSDictionary *)properties;
++ (void)setUserAlias:(NSString *)userAlias;
+
+
 @end
