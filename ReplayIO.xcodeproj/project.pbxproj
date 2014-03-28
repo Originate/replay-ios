@@ -1,0 +1,420 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9F83B53218E5FB1E0031A36B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F83B53118E5FB1E0031A36B /* Foundation.framework */; };
+		9F83B53718E5FB1E0031A36B /* ReplayIO.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9F83B53618E5FB1E0031A36B /* ReplayIO.h */; };
+		9F83B53918E5FB1E0031A36B /* ReplayIO.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F83B53818E5FB1E0031A36B /* ReplayIO.m */; };
+		9F83B54018E5FB1E0031A36B /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F83B53F18E5FB1E0031A36B /* XCTest.framework */; };
+		9F83B54118E5FB1E0031A36B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F83B53118E5FB1E0031A36B /* Foundation.framework */; };
+		9F83B54318E5FB1E0031A36B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F83B54218E5FB1E0031A36B /* UIKit.framework */; };
+		9F83B54618E5FB1E0031A36B /* libReplayIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F83B52E18E5FB1E0031A36B /* libReplayIO.a */; };
+		9F83B54C18E5FB1E0031A36B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F83B54A18E5FB1E0031A36B /* InfoPlist.strings */; };
+		9F83B54E18E5FB1E0031A36B /* ReplayIOTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F83B54D18E5FB1E0031A36B /* ReplayIOTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9F83B54418E5FB1E0031A36B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9F83B52618E5FB1E0031A36B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9F83B52D18E5FB1E0031A36B;
+			remoteInfo = ReplayIO;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9F83B52C18E5FB1E0031A36B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				9F83B53718E5FB1E0031A36B /* ReplayIO.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		9F83B52E18E5FB1E0031A36B /* libReplayIO.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libReplayIO.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F83B53118E5FB1E0031A36B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		9F83B53518E5FB1E0031A36B /* ReplayIO-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ReplayIO-Prefix.pch"; sourceTree = "<group>"; };
+		9F83B53618E5FB1E0031A36B /* ReplayIO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReplayIO.h; sourceTree = "<group>"; };
+		9F83B53818E5FB1E0031A36B /* ReplayIO.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReplayIO.m; sourceTree = "<group>"; };
+		9F83B53E18E5FB1E0031A36B /* ReplayIOTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReplayIOTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F83B53F18E5FB1E0031A36B /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		9F83B54218E5FB1E0031A36B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		9F83B54918E5FB1E0031A36B /* ReplayIOTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ReplayIOTests-Info.plist"; sourceTree = "<group>"; };
+		9F83B54B18E5FB1E0031A36B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		9F83B54D18E5FB1E0031A36B /* ReplayIOTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReplayIOTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9F83B52B18E5FB1E0031A36B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F83B53218E5FB1E0031A36B /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F83B53B18E5FB1E0031A36B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F83B54618E5FB1E0031A36B /* libReplayIO.a in Frameworks */,
+				9F83B54018E5FB1E0031A36B /* XCTest.framework in Frameworks */,
+				9F83B54318E5FB1E0031A36B /* UIKit.framework in Frameworks */,
+				9F83B54118E5FB1E0031A36B /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9F83B52518E5FB1E0031A36B = {
+			isa = PBXGroup;
+			children = (
+				9F83B53318E5FB1E0031A36B /* ReplayIO */,
+				9F83B54718E5FB1E0031A36B /* ReplayIOTests */,
+				9F83B53018E5FB1E0031A36B /* Frameworks */,
+				9F83B52F18E5FB1E0031A36B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9F83B52F18E5FB1E0031A36B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9F83B52E18E5FB1E0031A36B /* libReplayIO.a */,
+				9F83B53E18E5FB1E0031A36B /* ReplayIOTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9F83B53018E5FB1E0031A36B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9F83B53118E5FB1E0031A36B /* Foundation.framework */,
+				9F83B53F18E5FB1E0031A36B /* XCTest.framework */,
+				9F83B54218E5FB1E0031A36B /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9F83B53318E5FB1E0031A36B /* ReplayIO */ = {
+			isa = PBXGroup;
+			children = (
+				9F83B53618E5FB1E0031A36B /* ReplayIO.h */,
+				9F83B53818E5FB1E0031A36B /* ReplayIO.m */,
+				9F83B53418E5FB1E0031A36B /* Supporting Files */,
+			);
+			path = ReplayIO;
+			sourceTree = "<group>";
+		};
+		9F83B53418E5FB1E0031A36B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				9F83B53518E5FB1E0031A36B /* ReplayIO-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		9F83B54718E5FB1E0031A36B /* ReplayIOTests */ = {
+			isa = PBXGroup;
+			children = (
+				9F83B54D18E5FB1E0031A36B /* ReplayIOTests.m */,
+				9F83B54818E5FB1E0031A36B /* Supporting Files */,
+			);
+			path = ReplayIOTests;
+			sourceTree = "<group>";
+		};
+		9F83B54818E5FB1E0031A36B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				9F83B54918E5FB1E0031A36B /* ReplayIOTests-Info.plist */,
+				9F83B54A18E5FB1E0031A36B /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9F83B52D18E5FB1E0031A36B /* ReplayIO */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F83B55118E5FB1E0031A36B /* Build configuration list for PBXNativeTarget "ReplayIO" */;
+			buildPhases = (
+				9F83B52A18E5FB1E0031A36B /* Sources */,
+				9F83B52B18E5FB1E0031A36B /* Frameworks */,
+				9F83B52C18E5FB1E0031A36B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ReplayIO;
+			productName = ReplayIO;
+			productReference = 9F83B52E18E5FB1E0031A36B /* libReplayIO.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		9F83B53D18E5FB1E0031A36B /* ReplayIOTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F83B55418E5FB1E0031A36B /* Build configuration list for PBXNativeTarget "ReplayIOTests" */;
+			buildPhases = (
+				9F83B53A18E5FB1E0031A36B /* Sources */,
+				9F83B53B18E5FB1E0031A36B /* Frameworks */,
+				9F83B53C18E5FB1E0031A36B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9F83B54518E5FB1E0031A36B /* PBXTargetDependency */,
+			);
+			name = ReplayIOTests;
+			productName = ReplayIOTests;
+			productReference = 9F83B53E18E5FB1E0031A36B /* ReplayIOTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9F83B52618E5FB1E0031A36B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = Originate;
+			};
+			buildConfigurationList = 9F83B52918E5FB1E0031A36B /* Build configuration list for PBXProject "ReplayIO" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 9F83B52518E5FB1E0031A36B;
+			productRefGroup = 9F83B52F18E5FB1E0031A36B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9F83B52D18E5FB1E0031A36B /* ReplayIO */,
+				9F83B53D18E5FB1E0031A36B /* ReplayIOTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9F83B53C18E5FB1E0031A36B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F83B54C18E5FB1E0031A36B /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9F83B52A18E5FB1E0031A36B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F83B53918E5FB1E0031A36B /* ReplayIO.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F83B53A18E5FB1E0031A36B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F83B54E18E5FB1E0031A36B /* ReplayIOTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9F83B54518E5FB1E0031A36B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9F83B52D18E5FB1E0031A36B /* ReplayIO */;
+			targetProxy = 9F83B54418E5FB1E0031A36B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		9F83B54A18E5FB1E0031A36B /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F83B54B18E5FB1E0031A36B /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		9F83B54F18E5FB1E0031A36B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		9F83B55018E5FB1E0031A36B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		9F83B55218E5FB1E0031A36B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/ReplayIO.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ReplayIO/ReplayIO-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		9F83B55318E5FB1E0031A36B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/ReplayIO.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ReplayIO/ReplayIO-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		9F83B55518E5FB1E0031A36B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ReplayIO/ReplayIO-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "ReplayIOTests/ReplayIOTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		9F83B55618E5FB1E0031A36B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ReplayIO/ReplayIO-Prefix.pch";
+				INFOPLIST_FILE = "ReplayIOTests/ReplayIOTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9F83B52918E5FB1E0031A36B /* Build configuration list for PBXProject "ReplayIO" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F83B54F18E5FB1E0031A36B /* Debug */,
+				9F83B55018E5FB1E0031A36B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9F83B55118E5FB1E0031A36B /* Build configuration list for PBXNativeTarget "ReplayIO" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F83B55218E5FB1E0031A36B /* Debug */,
+				9F83B55318E5FB1E0031A36B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		9F83B55418E5FB1E0031A36B /* Build configuration list for PBXNativeTarget "ReplayIOTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F83B55518E5FB1E0031A36B /* Debug */,
+				9F83B55618E5FB1E0031A36B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9F83B52618E5FB1E0031A36B /* Project object */;
+}
