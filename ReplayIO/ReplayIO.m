@@ -13,7 +13,8 @@
 @property (readwrite, nonatomic, strong) NSString* userAlias;
 @end
 
-static const NSString* serverURL = @"http://api.replay.io";
+static NSString* serverURL = @"http://api.replay.io";
+static NSString* eventsURL = @"http://api.replay.io/events";
 
 @implementation ReplayIO
 
@@ -35,12 +36,38 @@ static const NSString* serverURL = @"http://api.replay.io";
   [ReplayIO sharedTracker].userAlias = userAlias;
 }
 
-+ (void)trackEvent:(NSDictionary *)properties {
-
++ (void)trackEvent:(NSDictionary *)eventProperties {
+  [[ReplayIO sharedTracker] trackEvent:eventProperties];
 }
 
+- (void)trackEvent:(NSDictionary *)eventProperties {
+  NSURL* url = [NSURL URLWithString:eventsURL];
+  
+  NSError* error = nil;
+  NSData* eventJSON = [NSJSONSerialization dataWithJSONObject:eventProperties options:NSJSONWritingPrettyPrinted error:&error];
+  
+  if (!error) {
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPBody:eventJSON];
+    
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                             NSLog(@"response = %@", response);
+                             NSLog(@"data = %@", data);
+                             NSLog(@"error = %@", error);
+                           }];
+  }
+}
 
 @end
+
+
+
+
 
 /*
  

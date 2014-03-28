@@ -20,7 +20,7 @@
 + (void)trackWithAPIKey:(NSString *)apiKey;
 
 // Public methods
-+ (void)trackEvent:(NSDictionary *)properties;
++ (void)trackEvent:(NSDictionary *)eventProperties;
 + (void)setUserAlias:(NSString *)userAlias;
 
 
