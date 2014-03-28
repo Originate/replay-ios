@@ -16,31 +16,63 @@
 static NSString* serverURL = @"http://api.replay.io";
 static NSString* eventsURL = @"http://api.replay.io/events";
 
+
+#define DEBUG_LOG(fmt, ...) do { \
+if(self.debugMode) \
+NSLog(@"[Replay.IO] " fmt, ## __VA_ARGS__); \
+} while(0)
+
+
 @implementation ReplayIO
 
 + (ReplayIO*)sharedTracker {
   static ReplayIO* sharedInstance = nil;
   static dispatch_once_t onceToken;
-
+  
   dispatch_once(&onceToken, ^{
     sharedInstance = [[ReplayIO alloc] init];
   });
   return sharedInstance;
 }
 
+// user-facing convenience class methods
+
 + (void)trackWithAPIKey:(NSString *)apiKey {
-  [ReplayIO sharedTracker].apiKey = apiKey;
+  [[ReplayIO sharedTracker] trackWithAPIKey:apiKey];
 }
 
 + (void)setUserAlias:(NSString *)userAlias {
-  [ReplayIO sharedTracker].userAlias = userAlias;
+  [[ReplayIO sharedTracker] setUserAlias:userAlias];
 }
 
 + (void)trackEvent:(NSDictionary *)eventProperties {
   [[ReplayIO sharedTracker] trackEvent:eventProperties];
 }
 
++ (void)setDebugMode:(BOOL)debugMode {
+  [[ReplayIO sharedTracker] setDebugMode:debugMode];
+}
+
+// underlying instance methods
+
+- (void)trackWithAPIKey:(NSString *)apiKey {
+  self.apiKey = apiKey;
+  
+  DEBUG_LOG(@"Tracking with API Key: %@", apiKey);
+}
+
+- (void)setUserAlias:(NSString *)userAlias {
+  self.userAlias = userAlias;
+  
+  DEBUG_LOG(@"Set user alias: %@", userAlias);
+}
+
 - (void)trackEvent:(NSDictionary *)eventProperties {
+  if (!self.apiKey) {
+    DEBUG_LOG(@"No API key provided");
+    return;
+  }
+  
   NSURL* url = [NSURL URLWithString:eventsURL];
   
   NSError* error = nil;
@@ -56,24 +88,16 @@ static NSString* eventsURL = @"http://api.replay.io/events";
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                             NSLog(@"response = %@", response);
-                             NSLog(@"data = %@", data);
-                             NSLog(@"error = %@", error);
+                             
+                             DEBUG_LOG(@"response = %@", response);
+                             DEBUG_LOG(@"data     = %@", data);
+                             DEBUG_LOG(@"error    = %@", error);
                            }];
+  }
+  else {
+    DEBUG_LOG(@"Track event error: %@", error);
   }
 }
 
+
 @end
-
-
-
-
-
-/*
- 
-
-[ReplayIO trackWithAPIKey:@"......"];
-[ReplayIO trackEvent:@{}];
- 
- 
-*/

@@ -12,6 +12,7 @@
 
 @property (readonly, nonatomic, strong) NSString* apiKey;
 @property (readonly, nonatomic, strong) NSString* userAlias;
+@property (nonatomic) BOOL debugMode;
 
 // ReplayIO singleton object
 + (ReplayIO *)sharedTracker;
@@ -22,6 +23,7 @@
 // Public methods
 + (void)trackEvent:(NSDictionary *)eventProperties;
 + (void)setUserAlias:(NSString *)userAlias;
++ (void)setDebugMode:(BOOL)debugMode;
 
 
 @end
