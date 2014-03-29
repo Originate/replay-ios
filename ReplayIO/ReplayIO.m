@@ -7,20 +7,25 @@
 //
 
 #import "ReplayIO.h"
+#import "ReplayAPIManager.h"
+
+
+#define DEBUG_LOG(fmt, ...) do {                 \
+  if (self.debugMode) {                          \
+    NSLog(@"[Replay.IO] " fmt, ## __VA_ARGS__);  \
+  }                                              \
+} while(0)
+
+
+static NSString* serverURL = @"http://api.replay.io";
+static NSString* eventsURL = @"http://api.replay.io/events";
+
 
 @interface ReplayIO ()
 @property (readwrite, nonatomic, strong) NSString* apiKey;
 @property (readwrite, nonatomic, strong) NSString* userAlias;
 @end
 
-static NSString* serverURL = @"http://api.replay.io";
-static NSString* eventsURL = @"http://api.replay.io/events";
-
-
-#define DEBUG_LOG(fmt, ...) do { \
-if(self.debugMode) \
-NSLog(@"[Replay.IO] " fmt, ## __VA_ARGS__); \
-} while(0)
 
 
 @implementation ReplayIO
@@ -79,20 +84,14 @@ NSLog(@"[Replay.IO] " fmt, ## __VA_ARGS__); \
   NSData* eventJSON = [NSJSONSerialization dataWithJSONObject:eventProperties options:NSJSONWritingPrettyPrinted error:&error];
   
   if (!error) {
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    [request setHTTPMethod:@"POST"];
-    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [request setHTTPBody:eventJSON];
+    DEBUG_LOG(@"Tracking event: %@", eventProperties);
     
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                             
-                             DEBUG_LOG(@"response = %@", response);
-                             DEBUG_LOG(@"data     = %@", data);
-                             DEBUG_LOG(@"error    = %@", error);
-                           }];
+    [ReplayAPIManager sendJSONRequestToURL:url
+                                httpMethod:@"POST"
+                                  httpBody:eventJSON
+                         completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+      // do something
+    }];
   }
   else {
     DEBUG_LOG(@"Track event error: %@", error);

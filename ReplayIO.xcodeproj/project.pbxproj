@@ -32,6 +32,8 @@
 		9F83B54C18E5FB1E0031A36B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F83B54A18E5FB1E0031A36B /* InfoPlist.strings */; };
 		9F83B54E18E5FB1E0031A36B /* ReplayIOTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F83B54D18E5FB1E0031A36B /* ReplayIOTests.m */; };
 		9F83B55E18E63FCF0031A36B /* ReplayIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F83B53618E5FB1E0031A36B /* ReplayIO.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9FA2F35018E68B63000C0883 /* ReplayAPIManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FA2F34E18E68B63000C0883 /* ReplayAPIManager.h */; };
+		9FA2F35118E68B63000C0883 /* ReplayAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA2F34F18E68B63000C0883 /* ReplayAPIManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +78,8 @@
 		9F83B54918E5FB1E0031A36B /* ReplayIOTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ReplayIOTests-Info.plist"; sourceTree = "<group>"; };
 		9F83B54B18E5FB1E0031A36B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9F83B54D18E5FB1E0031A36B /* ReplayIOTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReplayIOTests.m; sourceTree = "<group>"; };
+		9FA2F34E18E68B63000C0883 /* ReplayAPIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayAPIManager.h; sourceTree = "<group>"; };
+		9FA2F34F18E68B63000C0883 /* ReplayAPIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayAPIManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +139,8 @@
 			children = (
 				9F83B53618E5FB1E0031A36B /* ReplayIO.h */,
 				9F83B53818E5FB1E0031A36B /* ReplayIO.m */,
+				9FA2F34E18E68B63000C0883 /* ReplayAPIManager.h */,
+				9FA2F34F18E68B63000C0883 /* ReplayAPIManager.m */,
 				9F83B53418E5FB1E0031A36B /* Supporting Files */,
 			);
 			path = ReplayIO;
@@ -173,6 +179,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FA2F35018E68B63000C0883 /* ReplayAPIManager.h in Headers */,
 				9F83B55E18E63FCF0031A36B /* ReplayIO.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -292,6 +299,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F83B53918E5FB1E0031A36B /* ReplayIO.m in Sources */,
+				9FA2F35118E68B63000C0883 /* ReplayAPIManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
