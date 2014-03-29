@@ -34,6 +34,7 @@
 		9F83B55E18E63FCF0031A36B /* ReplayIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F83B53618E5FB1E0031A36B /* ReplayIO.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9FA2F35018E68B63000C0883 /* ReplayAPIManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FA2F34E18E68B63000C0883 /* ReplayAPIManager.h */; };
 		9FA2F35118E68B63000C0883 /* ReplayAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA2F34F18E68B63000C0883 /* ReplayAPIManager.m */; };
+		9FEFB86918E6CB15007A33AF /* Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FEFB85F18E6B55B007A33AF /* Config.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +81,7 @@
 		9F83B54D18E5FB1E0031A36B /* ReplayIOTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReplayIOTests.m; sourceTree = "<group>"; };
 		9FA2F34E18E68B63000C0883 /* ReplayAPIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayAPIManager.h; sourceTree = "<group>"; };
 		9FA2F34F18E68B63000C0883 /* ReplayAPIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayAPIManager.m; sourceTree = "<group>"; };
+		9FEFB85F18E6B55B007A33AF /* Config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Config.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +143,7 @@
 				9F83B53818E5FB1E0031A36B /* ReplayIO.m */,
 				9FA2F34E18E68B63000C0883 /* ReplayAPIManager.h */,
 				9FA2F34F18E68B63000C0883 /* ReplayAPIManager.m */,
+				9FEFB85F18E6B55B007A33AF /* Config.plist */,
 				9F83B53418E5FB1E0031A36B /* Supporting Files */,
 			);
 			path = ReplayIO;
@@ -196,6 +199,7 @@
 				9F83B52C18E5FB1E0031A36B /* CopyFiles */,
 				9F83B55D18E63FB00031A36B /* Headers */,
 				9F83B56018E657AF0031A36B /* Run Script (Prepare Framework) */,
+				9FEFB86818E6CB0F007A33AF /* Resources */,
 			);
 			buildRules = (
 			);
@@ -258,6 +262,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F83B54C18E5FB1E0031A36B /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9FEFB86818E6CB0F007A33AF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9FEFB86918E6CB15007A33AF /* Config.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

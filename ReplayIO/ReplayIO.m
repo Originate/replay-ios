@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Originate. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import "ReplayIO.h"
 #import "ReplayAPIManager.h"
 
@@ -22,8 +23,10 @@ static NSString* eventsURL = @"http://api.replay.io/events";
 
 
 @interface ReplayIO ()
-@property (readwrite, nonatomic, strong) NSString* apiKey;
+//@property (readwrite, nonatomic, strong) NSString* apiKey;
 @property (readwrite, nonatomic, strong) NSString* userAlias;
+//@property (nonatomic, strong) NSString* clientUUID;
+//@property (nonatomic, strong) NSString* sessionUUID;
 @end
 
 
@@ -61,7 +64,10 @@ static NSString* eventsURL = @"http://api.replay.io/events";
 // underlying instance methods
 
 - (void)trackWithAPIKey:(NSString *)apiKey {
-  self.apiKey = apiKey;
+  
+  [[ReplayAPIManager sharedManager] setAPIKey:apiKey
+                                   clientUUID:[[[UIDevice currentDevice] identifierForVendor ] UUIDString]
+                                  sessionUUID:@"sessionID"];
   
   DEBUG_LOG(@"Tracking with API Key: %@", apiKey);
 }
@@ -73,29 +79,18 @@ static NSString* eventsURL = @"http://api.replay.io/events";
 }
 
 - (void)trackEvent:(NSDictionary *)eventProperties {
-  if (!self.apiKey) {
+  if (![ReplayAPIManager sharedManager].apiKey) {
     DEBUG_LOG(@"No API key provided");
     return;
   }
-  
-  NSURL* url = [NSURL URLWithString:eventsURL];
-  
-  NSError* error = nil;
-  NSData* eventJSON = [NSJSONSerialization dataWithJSONObject:eventProperties options:NSJSONWritingPrettyPrinted error:&error];
-  
-  if (!error) {
-    DEBUG_LOG(@"Tracking event: %@", eventProperties);
-    
-    [ReplayAPIManager sendJSONRequestToURL:url
-                                httpMethod:@"POST"
-                                  httpBody:eventJSON
-                         completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-      // do something
-    }];
-  }
-  else {
-    DEBUG_LOG(@"Track event error: %@", error);
-  }
+
+  [[ReplayAPIManager sharedManager] callEndpoint:@"Events"
+                                        withData:eventProperties
+                               completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                                 DEBUG_LOG(@"response = %@", response);
+                                 DEBUG_LOG(@"data     = %@", data);
+                                 DEBUG_LOG(@"error    = %@", connectionError);
+                               }];
 }
 
 
