@@ -405,6 +405,7 @@
 				DSTROOT = /tmp/ReplayIO.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ReplayIO/ReplayIO-Prefix.pch";
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(PROJECT_NAME)Headers";
@@ -468,6 +469,7 @@
 		9F83B56318E658FA0031A36B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -498,6 +500,7 @@
 				9F83B55318E5FB1E0031A36B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9F83B55418E5FB1E0031A36B /* Build configuration list for PBXNativeTarget "ReplayIOTests" */ = {
 			isa = XCConfigurationList;
@@ -506,6 +509,7 @@
 				9F83B55618E5FB1E0031A36B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9F83B56218E658FA0031A36B /* Build configuration list for PBXAggregateTarget "Framework" */ = {
 			isa = XCConfigurationList;
@@ -514,6 +518,7 @@
 				9F83B56418E658FA0031A36B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
