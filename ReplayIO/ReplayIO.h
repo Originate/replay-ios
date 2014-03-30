@@ -8,10 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ReplayIO : NSObject
+#define DEBUG_LOG(fmt, ...) do {                 \
+  if ([ReplayIO sharedTracker].debugMode) {      \
+    NSLog(@"[Replay.IO] " fmt, ## __VA_ARGS__);  \
+  }                                              \
+} while(0)
 
-@property (readonly, nonatomic, strong) NSString* apiKey;
-@property (readonly, nonatomic, strong) NSString* userAlias;
+@interface ReplayIO : NSObject
 @property (nonatomic) BOOL debugMode;
 
 // ReplayIO singleton object
@@ -24,6 +27,5 @@
 + (void)trackEvent:(NSDictionary *)eventProperties;
 + (void)setUserAlias:(NSString *)userAlias;
 + (void)setDebugMode:(BOOL)debugMode;
-
 
 @end

@@ -13,15 +13,9 @@
 @property (nonatomic, strong) NSString* apiKey;
 @property (nonatomic, strong) NSString* clientUUID;
 @property (nonatomic, strong) NSString* sessionUUID;
-@property (nonatomic, strong) NSDictionary* configPlist;
 
 + (ReplayAPIManager *)sharedManager;
 - (void)setAPIKey:(NSString *)apiKey clientUUID:(NSString *)clientUUID sessionUUID:(NSString *)sessionUUID;
-
-+ (void)sendJSONRequestToURL:(NSURL *)url
-                  httpMethod:(NSString *)httpMethod
-                    httpBody:(NSData *)httpBody
-           completionHandler:(void (^)(NSURLResponse* response, NSData* data, NSError* connectionError)) handler;
 
 
 - (void)callEndpoint:(NSString *)endpoint

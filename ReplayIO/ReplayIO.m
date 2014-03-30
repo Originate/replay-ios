@@ -11,26 +11,6 @@
 #import "ReplayAPIManager.h"
 
 
-#define DEBUG_LOG(fmt, ...) do {                 \
-  if (self.debugMode) {                          \
-    NSLog(@"[Replay.IO] " fmt, ## __VA_ARGS__);  \
-  }                                              \
-} while(0)
-
-
-static NSString* serverURL = @"http://api.replay.io";
-static NSString* eventsURL = @"http://api.replay.io/events";
-
-
-@interface ReplayIO ()
-//@property (readwrite, nonatomic, strong) NSString* apiKey;
-@property (readwrite, nonatomic, strong) NSString* userAlias;
-//@property (nonatomic, strong) NSString* clientUUID;
-//@property (nonatomic, strong) NSString* sessionUUID;
-@end
-
-
-
 @implementation ReplayIO
 
 + (ReplayIO*)sharedTracker {
@@ -43,7 +23,8 @@ static NSString* eventsURL = @"http://api.replay.io/events";
   return sharedInstance;
 }
 
-// user-facing convenience class methods
+
+#pragma mark - Convenience class methods
 
 + (void)trackWithAPIKey:(NSString *)apiKey {
   [[ReplayIO sharedTracker] trackWithAPIKey:apiKey];
@@ -61,15 +42,14 @@ static NSString* eventsURL = @"http://api.replay.io/events";
   [[ReplayIO sharedTracker] setDebugMode:debugMode];
 }
 
-// underlying instance methods
+
+#pragma mark - Underlying instance methods
 
 - (void)trackWithAPIKey:(NSString *)apiKey {
   
   [[ReplayAPIManager sharedManager] setAPIKey:apiKey
                                    clientUUID:[[[UIDevice currentDevice] identifierForVendor ] UUIDString]
                                   sessionUUID:@"sessionID"];
-  
-  DEBUG_LOG(@"Tracking with API Key: %@", apiKey);
 }
 
 - (void)setUserAlias:(NSString *)userAlias {
@@ -79,10 +59,6 @@ static NSString* eventsURL = @"http://api.replay.io/events";
 }
 
 - (void)trackEvent:(NSDictionary *)eventProperties {
-  if (![ReplayAPIManager sharedManager].apiKey) {
-    DEBUG_LOG(@"No API key provided");
-    return;
-  }
 
   [[ReplayAPIManager sharedManager] callEndpoint:@"Events"
                                         withData:eventProperties
