@@ -30,8 +30,8 @@
   [[ReplayIO sharedTracker] trackWithAPIKey:apiKey];
 }
 
-+ (void)setUserAlias:(NSString *)userAlias {
-  [[ReplayIO sharedTracker] setUserAlias:userAlias];
++ (void)updateUserAlias:(NSString *)userAlias {
+  [[ReplayIO sharedTracker] updateUserAlias:userAlias];
 }
 
 + (void)trackEvent:(NSDictionary *)eventProperties {
@@ -52,10 +52,13 @@
                                   sessionUUID:@"sessionID"];
 }
 
-- (void)setUserAlias:(NSString *)userAlias {
-  self.userAlias = userAlias;
+- (void)updateUserAlias:(NSString *)userAlias {
   
-  DEBUG_LOG(@"Set user alias: %@", userAlias);
+  [[ReplayAPIManager sharedManager] callEndpoint:@"Alias"
+                                        withData:userAlias
+                               completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                                 DEBUG_LOG(@"Updated user alais");
+                               }];
 }
 
 - (void)trackEvent:(NSDictionary *)eventProperties {
@@ -63,9 +66,7 @@
   [[ReplayAPIManager sharedManager] callEndpoint:@"Events"
                                         withData:eventProperties
                                completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                                 DEBUG_LOG(@"response = %@", response);
-                                 DEBUG_LOG(@"data     = %@", data);
-                                 DEBUG_LOG(@"error    = %@", connectionError);
+                                 DEBUG_LOG(@"Tracked event");
                                }];
 }
 

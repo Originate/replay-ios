@@ -15,6 +15,7 @@
 } while(0)
 
 @interface ReplayIO : NSObject
+
 @property (nonatomic) BOOL debugMode;
 
 // ReplayIO singleton object
@@ -25,7 +26,7 @@
 
 // Public methods
 + (void)trackEvent:(NSDictionary *)eventProperties;
-+ (void)setUserAlias:(NSString *)userAlias;
++ (void)updateUserAlias:(NSString *)userAlias;
 + (void)setDebugMode:(BOOL)debugMode;
 
 @end

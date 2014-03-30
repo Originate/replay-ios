@@ -22,10 +22,12 @@
 
 @interface ReplayConfig : NSObject
 
+@property (nonatomic, strong, readonly) NSDictionary* config;
+
 + (ReplayConfig *)sharedInstance;
+
+// convenience methods
 + (NSDictionary *)endpointDefinition:(NSString *)endpointKey;
 + (NSString *)productionURL;
-
-@property (nonatomic, strong, readonly) NSDictionary* config;
 
 @end
