@@ -68,13 +68,13 @@
   // populate the JSON payload with values
   for (NSString* key in json.allKeys) {
     if ([json[key] isEqualToString:kContent]) {
-      json[key] = self.data;
+      json[key] = [self valueWithNilCheck:self.data];
     }
     else {
       NSString* localKey = [ReplayAPIManager mapLocalKeyFromServerKey:key];
       NSString* localVal = [[ReplayAPIManager sharedManager] valueForKey:localKey];
-      
-      json[key] = localVal;
+
+      json[key] = [self valueWithNilCheck:localVal];
     }
   }
   
@@ -99,6 +99,16 @@
 
 - (NSString *)httpMethodForEndpoint {
   return self.endpointDefinition[kMethod];
+}
+
+
+#pragma mark - 
+
+- (id)valueWithNilCheck:(id)value {
+  if (!value) {
+    return [NSNull null];
+  }
+  return value;
 }
 
 @end
