@@ -22,7 +22,8 @@
 
 @interface ReplayConfig : NSObject
 
-@property (nonatomic, strong, readonly) NSDictionary* config;
+@property (nonatomic, strong, readonly) NSDictionary* urls;
+@property (nonatomic, strong, readonly) NSDictionary* endpoints;
 
 + (ReplayConfig *)sharedInstance;
 

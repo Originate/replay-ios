@@ -21,15 +21,12 @@ The API endpoints and configuration strings are defined and stored in the `Repla
 
 ### Adding/modifying endpoint definitions
 
-API endpoints are defined in the "Endpoints" key of ReplayConfig's config property. To add an endpoint, simply add its definition here. The definition must follow this format:
+API endpoints are defined in the `ReplayConfig.endpoints`. To add an endpoint, simply add its definition here. The definition must follow this format:
 
 ```
-@"Endpoint name":
-    @{kPath   : @"relative-path-to-resource",
-      kMethod : @"HTTP method: POST, GET, etc...",
-      kJSON   : 
-          @{the JSON structure that the server requires}
-     }
+@"Endpoint name": @{kPath  : @"relative-path-to-resource",
+                    kMethod: @"HTTP method: POST, GET, etc...",
+                    kJSON  : @{the JSON structure that the server requires}}
 ```
 
 Within the dictionary for `kJSON`, mark the primary data parameter with `kContent`.
@@ -48,17 +45,15 @@ POST /events
 }
 ```
 
-This definition is added to `self.config`:
+This definition is added to `self.endpoints`:
 
 ```obj-c
-@"Events":
-    @{kPath   : @"events",
-      kMethod : @"POST",
-      kJSON   :
-          @{@"data"   : kContent,
-            kReplayKey: @"",
-            kClientId : @"",
-            kSessionId: @""}
+@"Events": @{kPath  : @"events",
+             kMethod: @"POST",
+             kJSON  : @{@"data"   : kContent,
+                        kReplayKey: @"",
+                        kClientId : @"",
+                        kSessionId: @""}
 ```
 
 Note how `kContent` marks the primary data value of this call. When an instance of `ReplayEndpoint` is created, the value marked with `kContent` will be replaced with the actual data to be sent.

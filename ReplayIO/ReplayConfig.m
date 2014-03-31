@@ -9,7 +9,8 @@
 #import "ReplayConfig.h"
 
 @interface ReplayConfig ()
-@property (nonatomic, strong, readwrite) NSDictionary* config;
+@property (nonatomic, strong, readwrite) NSDictionary* urls;
+@property (nonatomic, strong, readwrite) NSDictionary* endpoints;
 @end
 
 @implementation ReplayConfig
@@ -27,38 +28,37 @@
 - (id)init {
   self = [super self];
   if (self) {
-    self.config =
-      @{@"Development URL": @"http://api.replay.io/",
-        @"Staging URL"    : @"http://api.replay.io/",
-        @"Production URL" : @"http://api.replay.io/",
-        @"Endpoints"      :
-          @{@"Events":
-              @{kPath   : @"events",
-                kMethod : @"POST",
-                kJSON   :
-                  @{@"data"   : kContent,
-                    kReplayKey: @"",
-                    kClientId : @"",
-                    kSessionId: @""}},
-            @"Alias":
-              @{kPath   : @"aliases",
-                kMethod : @"POST",
-                kJSON   :
-                  @{@"alias"  : kContent,
-                    kReplayKey: @"",
-                    kClientId : @""}}}};
+    
+    self.urls =
+      @{@"Development": @"http://api.replay.io/",
+        @"Staging"    : @"http://api.replay.io/",
+        @"Production" : @"http://api.replay.io/"};
+    
+    self.endpoints =
+      @{@"Events": @{kPath  : @"events",
+                     kMethod: @"POST",
+                     kJSON  : @{@"data"   : kContent,
+                                kReplayKey: @"",
+                                kClientId : @"",
+                                kSessionId: @""}},
+        
+        @"Alias": @{kPath  : @"aliases",
+                    kMethod: @"POST",
+                    kJSON  : @{@"alias"  : kContent,
+                               kReplayKey: @"",
+                               kClientId : @""}}};
   }
   return self;
 }
 
 + (NSDictionary *)endpointDefinition:(NSString *)endpointKey {
-  NSDictionary* endpointDefinition = [ReplayConfig sharedInstance].config[@"Endpoints"][endpointKey];
+  NSDictionary* endpointDefinition = [ReplayConfig sharedInstance].endpoints[endpointKey];
   NSAssert(endpointDefinition, @"Endpoint \"%@\" not defined!", endpointKey);
   return endpointDefinition;
 }
 
 + (NSString *)productionURL {
-  return [ReplayConfig sharedInstance].config[@"Production URL"];
+  return [ReplayConfig sharedInstance].urls[@"Production"];
 }
 
 @end
