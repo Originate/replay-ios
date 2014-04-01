@@ -10,18 +10,9 @@
 #import "ReplayIO.h"
 #import "ReplayAPIManager.h"
 
-
 @implementation ReplayIO
 
-+ (ReplayIO*)sharedTracker {
-  static ReplayIO* sharedInstance = nil;
-  static dispatch_once_t onceToken;
-  
-  dispatch_once(&onceToken, ^{
-    sharedInstance = [[ReplayIO alloc] init];
-  });
-  return sharedInstance;
-}
+SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker)
 
 
 #pragma mark - Convenience class methods
@@ -56,8 +47,8 @@
   
   [[ReplayAPIManager sharedManager] callEndpoint:@"Alias"
                                         withData:userAlias
-                               completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                                 DEBUG_LOG(@"Updated user alais");
+                               completionHandler:^(id json, NSError* error) {
+                                 DEBUG_LOG(@"%@", error ?: json);
                                }];
 }
 
@@ -65,8 +56,8 @@
 
   [[ReplayAPIManager sharedManager] callEndpoint:@"Events"
                                         withData:eventProperties
-                               completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                                 DEBUG_LOG(@"Tracked event");
+                               completionHandler:^(id json, NSError* error) {
+                                  DEBUG_LOG(@"%@", error ?: json);
                                }];
 }
 

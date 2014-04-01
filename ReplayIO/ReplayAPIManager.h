@@ -16,7 +16,7 @@
 
 + (ReplayAPIManager *)sharedManager;
 - (void)setAPIKey:(NSString *)apiKey clientUUID:(NSString *)clientUUID sessionUUID:(NSString *)sessionUUID;
-- (void)callEndpoint:(NSString *)endpointName withData:(id)data completionHandler:(void (^)(NSURLResponse* response, NSData* data, NSError* connectionError)) handler;
+- (void)callEndpoint:(NSString *)endpointName withData:(id)data completionHandler:(void (^)(id json, NSError* error)) handler;
 
 + (NSString *)mapLocalKeyFromServerKey:(NSString *)serverKey;
 

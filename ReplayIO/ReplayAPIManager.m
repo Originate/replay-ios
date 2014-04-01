@@ -13,15 +13,8 @@
 
 @implementation ReplayAPIManager
 
-+ (ReplayAPIManager *)sharedManager {
-  static ReplayAPIManager* sharedInstance = nil;
-  static dispatch_once_t onceToken;
-  
-  dispatch_once(&onceToken, ^{
-    sharedInstance = [[ReplayAPIManager alloc] init];
-  });
-  return sharedInstance;
-}
+SYNTHESIZE_SINGLETON(ReplayAPIManager, sharedManager)
+
 
 - (void)setAPIKey:(NSString *)apiKey
        clientUUID:(NSString *)clientUUID
@@ -31,7 +24,7 @@
   self.clientUUID = clientUUID;
   self.sessionUUID = sessionUUID;
   
-  DEBUG_LOG(@"Tracking with {API Key: %@, Client UUID: %@, Session UUID: %@}", apiKey, clientUUID, sessionUUID);
+  DEBUG_LOG(@"Tracking with\n  { API Key:      %@,\n    Client UUID:  %@,\n    Session UUID: %@ }", apiKey, clientUUID, sessionUUID);
 }
 
 
@@ -39,17 +32,12 @@
 
 - (void)callEndpoint:(NSString *)endpointName
             withData:(id)data
-   completionHandler:(void (^)(NSURLResponse* response, NSData* data, NSError* connectionError)) handler
+   completionHandler:(void (^)(id json, NSError* error)) handler
 {
   
-  if (![ReplayAPIManager sharedManager].apiKey) {
-    DEBUG_LOG(@"No API key provided");
-    return;
-  }
-  
   ReplayEndpoint* endpoint = [[ReplayEndpoint alloc] initWithEndpointName:endpointName data:data];
-  [endpoint callWithCompletionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-    handler(response, data, connectionError);
+  [endpoint callWithCompletionHandler:^(id json, NSError* error) {
+    handler(json, error);
   }];
 }
 

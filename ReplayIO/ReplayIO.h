@@ -8,12 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#define DEBUG_LOG(fmt, ...) do {                 \
-  if ([ReplayIO sharedTracker].debugMode) {      \
-    NSLog(@"[Replay.IO] " fmt, ## __VA_ARGS__);  \
-  }                                              \
-} while(0)
-
 @interface ReplayIO : NSObject
 
 @property (nonatomic) BOOL debugMode;

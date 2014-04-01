@@ -23,7 +23,7 @@
 
 @implementation ReplayEndpoint
 
-- (id)initWithEndpointName:(NSString *)endpointName data:(id)data {
+- (instancetype)initWithEndpointName:(NSString *)endpointName data:(id)data {
   self = [super init];
   if (self) {
     // set internal properties
@@ -39,7 +39,7 @@
   return self;
 }
 
-- (void)callWithCompletionHandler:(void (^)(NSURLResponse* response, NSData* data, NSError* connectionError)) handler {
+- (void)callWithCompletionHandler:(void (^)(id json, NSError* error)) handler {
   DEBUG_LOG(@"Calling \"%@\" with object %@", self.endpointName, self.data);
   
   NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:self.url];
@@ -47,15 +47,20 @@
   [request setHTTPBody:self.jsonData];
   [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
   [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-  
+
   [NSURLConnection sendAsynchronousRequest:request
                                      queue:[NSOperationQueue mainQueue]
                          completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                           DEBUG_LOG(@"response = %@", response);
-                           DEBUG_LOG(@"data     = %@", data);
-                           DEBUG_LOG(@"error    = %@", error);
                            
-                           handler(response, data, error);
+                           // serialize data to JSON
+                           id json = nil;
+                           if (!error) {
+                             NSError* jsonError = nil;
+                             json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
+                             error = jsonError;
+                           }
+                           
+                           handler(json, error);
                          }];
 }
 
@@ -68,13 +73,13 @@
   // populate the JSON payload with values
   for (NSString* key in json.allKeys) {
     if ([json[key] isEqualToString:kContent]) {
-      json[key] = [self valueWithNilCheck:self.data];
+      json[key] = self.data ?: [NSNull null];
     }
     else {
       NSString* localKey = [ReplayAPIManager mapLocalKeyFromServerKey:key];
       NSString* localVal = [[ReplayAPIManager sharedManager] valueForKey:localKey];
 
-      json[key] = [self valueWithNilCheck:localVal];
+      json[key] = localVal ?: [NSNull null];
     }
   }
   
@@ -83,17 +88,12 @@
                                                      options:NSJSONWritingPrettyPrinted
                                                        error:&error];
   
-  if (error) {
-    // something went wrong
-    NSLog(@"something went wrong");
-  }
-  
   return jsonData;
   
 }
 
 - (NSURL *)urlForEndpoint {
-  NSURL* baseURL = [NSURL URLWithString:[ReplayConfig productionURL]];
+  NSURL* baseURL = [NSURL URLWithString:[ReplayConfig developmentURL]]; // TODO: build setting
   return [baseURL URLByAppendingPathComponent:self.endpointDefinition[kPath]];
 }
 
@@ -101,14 +101,5 @@
   return self.endpointDefinition[kMethod];
 }
 
-
-#pragma mark - 
-
-- (id)valueWithNilCheck:(id)value {
-  if (!value) {
-    return [NSNull null];
-  }
-  return value;
-}
 
 @end

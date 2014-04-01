@@ -15,24 +15,21 @@
 
 @implementation ReplayConfig
 
-+ (ReplayConfig *)sharedInstance {
-  static ReplayConfig* sharedInstance = nil;
-  static dispatch_once_t onceToken;
-  
-  dispatch_once(&onceToken, ^{
-    sharedInstance = [[ReplayConfig alloc] init];
-  });
-  return sharedInstance;
-}
+SYNTHESIZE_SINGLETON(ReplayConfig, sharedInstance)
+
 
 - (id)init {
   self = [super self];
   if (self) {
     
+    //=============================================
+    // Store Replay.IO configuration/settings here
+    //=============================================
+    
     self.urls =
-      @{@"Development": @"http://api.replay.io/",
-        @"Staging"    : @"http://api.replay.io/",
-        @"Production" : @"http://api.replay.io/"};
+      @{@"Development": @"http://0.0.0.0:3000/",
+        @"Staging"    : @"http://0.0.0.0:3000/",
+        @"Production" : @"http://0.0.0.0:3000/"};
     
     self.endpoints =
       @{@"Events": @{kPath  : @"events",
@@ -59,6 +56,10 @@
 
 + (NSString *)productionURL {
   return [ReplayConfig sharedInstance].urls[@"Production"];
+}
+
++ (NSString *)developmentURL {
+  return [ReplayConfig sharedInstance].urls[@"Development"];
 }
 
 @end

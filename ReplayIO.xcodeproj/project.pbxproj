@@ -36,6 +36,7 @@
 		9F83B54C18E5FB1E0031A36B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F83B54A18E5FB1E0031A36B /* InfoPlist.strings */; };
 		9F83B54E18E5FB1E0031A36B /* ReplayIOTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F83B54D18E5FB1E0031A36B /* ReplayIOTests.m */; };
 		9F83B55E18E63FCF0031A36B /* ReplayIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F83B53618E5FB1E0031A36B /* ReplayIO.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9F9196F518EA48D200D25B95 /* ReplayHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F9196F318EA48D200D25B95 /* ReplayHelper.h */; };
 		9FA2F35018E68B63000C0883 /* ReplayAPIManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FA2F34E18E68B63000C0883 /* ReplayAPIManager.h */; };
 		9FA2F35118E68B63000C0883 /* ReplayAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA2F34F18E68B63000C0883 /* ReplayAPIManager.m */; };
 /* End PBXBuildFile section */
@@ -86,6 +87,7 @@
 		9F83B54918E5FB1E0031A36B /* ReplayIOTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ReplayIOTests-Info.plist"; sourceTree = "<group>"; };
 		9F83B54B18E5FB1E0031A36B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9F83B54D18E5FB1E0031A36B /* ReplayIOTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReplayIOTests.m; sourceTree = "<group>"; };
+		9F9196F318EA48D200D25B95 /* ReplayHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayHelper.h; sourceTree = "<group>"; };
 		9FA2F34E18E68B63000C0883 /* ReplayAPIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayAPIManager.h; sourceTree = "<group>"; };
 		9FA2F34F18E68B63000C0883 /* ReplayAPIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayAPIManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -162,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				9F83B53518E5FB1E0031A36B /* ReplayIO-Prefix.pch */,
+				9F9196F318EA48D200D25B95 /* ReplayHelper.h */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -191,6 +194,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F9196F518EA48D200D25B95 /* ReplayHelper.h in Headers */,
 				9F4122C118E8C67100FDDFFB /* ReplayEndpoint.h in Headers */,
 				9F4122BF18E8C67100FDDFFB /* ReplayConfig.h in Headers */,
 				9FA2F35018E68B63000C0883 /* ReplayAPIManager.h in Headers */,

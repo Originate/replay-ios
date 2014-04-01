@@ -16,9 +16,9 @@
 #define kJSON    @"kJSON"
 
 // Framework keys
-#define kReplayKey @"kReplayKey"
-#define kClientId  @"kClientId"
-#define kSessionId @"kSessionId"
+#define kReplayKey @"replayKey"
+#define kClientId  @"clientId"
+#define kSessionId @"sessionId"
 
 @interface ReplayConfig : NSObject
 
@@ -30,5 +30,6 @@
 // convenience methods
 + (NSDictionary *)endpointDefinition:(NSString *)endpointKey;
 + (NSString *)productionURL;
++ (NSString *)developmentURL;
 
 @end
