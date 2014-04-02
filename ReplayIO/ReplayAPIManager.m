@@ -11,6 +11,13 @@
 #import "ReplayConfig.h"
 #import "ReplayEndpoint.h"
 
+
+@interface ReplayAPIManager ()
+@property (nonatomic, strong, readwrite) NSString* apiKey;
+@property (nonatomic, strong, readwrite) NSString* clientUUID;
+@property (nonatomic, strong, readwrite) NSString* sessionUUID;
+@end
+
 @implementation ReplayAPIManager
 
 SYNTHESIZE_SINGLETON(ReplayAPIManager, sharedManager);

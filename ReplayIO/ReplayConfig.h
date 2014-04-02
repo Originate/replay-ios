@@ -29,7 +29,6 @@
 
 // convenience methods
 + (NSDictionary *)endpointDefinition:(NSString *)endpointKey;
-+ (NSString *)productionURL;
-+ (NSString *)developmentURL;
++ (NSString *)url;
 
 @end

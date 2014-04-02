@@ -52,12 +52,8 @@ SYNTHESIZE_SINGLETON(ReplayConfig, sharedInstance);
   return [ReplayConfig sharedInstance].endpoints[endpointKey];
 }
 
-+ (NSString *)productionURL {
-  return [ReplayConfig sharedInstance].urls[@"Production"];
-}
-
-+ (NSString *)developmentURL {
-  return [ReplayConfig sharedInstance].urls[@"Development"];
++ (NSString *)url {
+  return [ReplayConfig sharedInstance].urls[@"Development"]; // TODO: build setting
 }
 
 @end

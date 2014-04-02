@@ -10,9 +10,9 @@
 
 @interface ReplayAPIManager : NSObject
 
-@property (nonatomic, strong) NSString* apiKey;
-@property (nonatomic, strong) NSString* clientUUID;
-@property (nonatomic, strong) NSString* sessionUUID;
+@property (nonatomic, strong, readonly) NSString* apiKey;
+@property (nonatomic, strong, readonly) NSString* clientUUID;
+@property (nonatomic, strong, readonly) NSString* sessionUUID;
 
 + (ReplayAPIManager *)sharedManager;
 

@@ -123,7 +123,7 @@
 }
 
 - (NSURL *)urlForEndpoint {
-  NSURL* baseURL = [NSURL URLWithString:[ReplayConfig developmentURL]]; // TODO: build setting
+  NSURL* baseURL = [NSURL URLWithString:[ReplayConfig url]];
   return [baseURL URLByAppendingPathComponent:self.endpointDefinition[kPath]];
 }
 

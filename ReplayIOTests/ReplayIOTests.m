@@ -28,11 +28,11 @@
   [super tearDown];
 }
 
-- (void)testReplayIOIsSingleton {
+- (void)testIsSingleton {
   XCTAssertEqualObjects(_replayIOInstance1, _replayIOInstance2, @"ReplayIO should be a singleton");
 }
 
-- (void)testReplayIODebugProperty {
+- (void)testDebugProperty {
   [_replayIOInstance1 setDebugMode:NO];
   BOOL debugValueBefore = _replayIOInstance1.debugMode;
   
