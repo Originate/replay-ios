@@ -26,3 +26,5 @@
   });                                                   \
   return singletonName;                                 \
 }
+
+#define ERROR_DOMAIN_REPLAY_IO @"com.originate.replayio"

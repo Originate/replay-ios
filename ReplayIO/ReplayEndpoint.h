@@ -14,7 +14,7 @@
 @property (nonatomic, strong, readonly) NSURL* url;
 @property (nonatomic, strong, readonly) NSString* httpMethod;
 
-- (id)initWithEndpointName:(NSString *)endpointName data:(id)data;
+- (instancetype)initWithEndpointName:(NSString *)endpointName data:(id)data;
 - (void)callWithCompletionHandler:(void (^)(id json, NSError* error)) handler;
 
 @end

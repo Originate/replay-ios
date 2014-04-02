@@ -12,7 +12,7 @@
 
 @implementation ReplayIO
 
-SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker)
+SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 
 
 #pragma mark - Convenience class methods

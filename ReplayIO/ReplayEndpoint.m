@@ -32,14 +32,21 @@
     self.endpointDefinition = [ReplayConfig endpointDefinition:endpointName];
     
     // set public properties
-    self.jsonData   = [self jsonDataForEndpoint];
-    self.url        = [self urlForEndpoint];
-    self.httpMethod = [self httpMethodForEndpoint];
+    if (self.endpointDefinition) {
+      self.jsonData   = [self jsonDataForEndpoint];
+      self.url        = [self urlForEndpoint];
+      self.httpMethod = [self httpMethodForEndpoint];
+    }
   }
   return self;
 }
 
 - (void)callWithCompletionHandler:(void (^)(id json, NSError* error)) handler {
+  if (!(self.jsonData && self.url && self.httpMethod)) {
+    NSError* unknownEndpointError = [NSError errorWithDomain:ERROR_DOMAIN_REPLAY_IO code:0 userInfo:nil];
+    handler(nil, unknownEndpointError);
+  }
+  
   DEBUG_LOG(@"Calling \"%@\" with object %@", self.endpointName, self.data);
   
   NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:self.url];
@@ -68,28 +75,51 @@
 #pragma mark - Helper methods (retrieve data from endpoint definitions)
 
 - (NSData *)jsonDataForEndpoint {
-  NSMutableDictionary* json = [self.endpointDefinition[kJSON] mutableCopy];
-  
-  // populate the JSON payload with values
-  for (NSString* key in json.allKeys) {
-    if ([json[key] isEqualToString:kContent]) {
-      json[key] = self.data ?: [NSNull null];
-    }
-    else {
-      NSString* localKey = [ReplayAPIManager mapLocalKeyFromServerKey:key];
-      NSString* localVal = [[ReplayAPIManager sharedManager] valueForKey:localKey];
+  NSDictionary* json = [ReplayEndpoint populatedJson:self.endpointDefinition[kJSON] withData:self.data];
 
-      json[key] = localVal ?: [NSNull null];
+  if ([NSJSONSerialization isValidJSONObject:json]) {
+    NSError* error = nil;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:json
+                                                     options:0
+                                                       error:&error];
+    return jsonData;
+  }
+  else {
+    return nil;
+  }
+}
+
+// populates the JSON payload with values
++ (NSDictionary *)populatedJson:(NSDictionary *)unpopulatedJson withData:(id)data {
+  NSMutableDictionary* json = [unpopulatedJson mutableCopy];
+  
+  for (NSString* key in json.allKeys) {
+    NSString* localKey = [ReplayAPIManager mapLocalKeyFromServerKey:key];
+    id newValue = [NSNull null];
+    
+    // local key exists (replace the value with the corresponding property stored in the ReplayAPIManager)
+    // for the keys: {apiKey, clientUUID, sessionUUID}
+    if (localKey) {
+      if ([[ReplayAPIManager sharedManager] respondsToSelector:NSSelectorFromString(localKey)]) {
+        newValue = [[ReplayAPIManager sharedManager] valueForKey:localKey];
+      }
+      else {
+        NSAssert(NO, @"Missing property \"%@\" in ReplayAPIManager", localKey);
+      }
     }
+    else if ([json[key] respondsToSelector:@selector(isEqualToString:)]) {
+      if ([json[key] isEqualToString:kContent]) {
+        newValue = data;
+      }
+    }
+    else if ([json[key] isKindOfClass:[NSDictionary class]]) {
+      newValue = [ReplayEndpoint populatedJson:json[key] withData:data];
+    }
+    
+    json[key] = newValue ?: [NSNull null];
   }
   
-  NSError* error = nil;
-  NSData* jsonData = [NSJSONSerialization dataWithJSONObject:json
-                                                     options:NSJSONWritingPrettyPrinted
-                                                       error:&error];
-  
-  return jsonData;
-  
+  return json;
 }
 
 - (NSURL *)urlForEndpoint {

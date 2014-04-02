@@ -13,7 +13,7 @@
 
 @implementation ReplayAPIManager
 
-SYNTHESIZE_SINGLETON(ReplayAPIManager, sharedManager)
+SYNTHESIZE_SINGLETON(ReplayAPIManager, sharedManager);
 
 
 - (void)setAPIKey:(NSString *)apiKey

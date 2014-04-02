@@ -15,7 +15,7 @@
 
 @implementation ReplayConfig
 
-SYNTHESIZE_SINGLETON(ReplayConfig, sharedInstance)
+SYNTHESIZE_SINGLETON(ReplayConfig, sharedInstance);
 
 
 - (id)init {
@@ -41,7 +41,7 @@ SYNTHESIZE_SINGLETON(ReplayConfig, sharedInstance)
         
         @"Alias": @{kPath  : @"aliases",
                     kMethod: @"POST",
-                    kJSON  : @{@"alias"  : kContent,
+                    kJSON  : @{@"data"   : @{ @"alias": kContent },
                                kReplayKey: @"",
                                kClientId : @""}}};
   }
@@ -49,9 +49,7 @@ SYNTHESIZE_SINGLETON(ReplayConfig, sharedInstance)
 }
 
 + (NSDictionary *)endpointDefinition:(NSString *)endpointKey {
-  NSDictionary* endpointDefinition = [ReplayConfig sharedInstance].endpoints[endpointKey];
-  NSAssert(endpointDefinition, @"Endpoint \"%@\" not defined!", endpointKey);
-  return endpointDefinition;
+  return [ReplayConfig sharedInstance].endpoints[endpointKey];
 }
 
 + (NSString *)productionURL {
