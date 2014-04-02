@@ -22,6 +22,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		9F1B804E18EC812800A47925 /* ReplayIOTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1B804D18EC812800A47925 /* ReplayIOTests.m */; };
+		9F1B805018EC863A00A47925 /* ReplayAPIManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1B804F18EC863A00A47925 /* ReplayAPIManagerTests.m */; };
+		9F1B805218EC900700A47925 /* ReplayConfigTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1B805118EC900700A47925 /* ReplayConfigTests.m */; };
 		9F4122BF18E8C67100FDDFFB /* ReplayConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4122BB18E8C67100FDDFFB /* ReplayConfig.h */; };
 		9F4122C018E8C67100FDDFFB /* ReplayConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4122BC18E8C67100FDDFFB /* ReplayConfig.m */; };
 		9F4122C118E8C67100FDDFFB /* ReplayEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4122BD18E8C67100FDDFFB /* ReplayEndpoint.h */; };
@@ -72,6 +75,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9F1B804D18EC812800A47925 /* ReplayIOTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayIOTests.m; sourceTree = "<group>"; };
+		9F1B804F18EC863A00A47925 /* ReplayAPIManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ReplayAPIManagerTests.m; path = ReplayIOTests/ReplayAPIManagerTests.m; sourceTree = SOURCE_ROOT; };
+		9F1B805118EC900700A47925 /* ReplayConfigTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayConfigTests.m; sourceTree = "<group>"; };
 		9F4122BB18E8C67100FDDFFB /* ReplayConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayConfig.h; sourceTree = "<group>"; };
 		9F4122BC18E8C67100FDDFFB /* ReplayConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayConfig.m; sourceTree = "<group>"; };
 		9F4122BD18E8C67100FDDFFB /* ReplayEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayEndpoint.h; sourceTree = "<group>"; };
@@ -87,7 +93,6 @@
 		9F83B54918E5FB1E0031A36B /* ReplayIOTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ReplayIOTests-Info.plist"; sourceTree = "<group>"; };
 		9F83B54B18E5FB1E0031A36B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9F9196F318EA48D200D25B95 /* ReplayHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayHelper.h; sourceTree = "<group>"; };
-		9F91971118EB776700D25B95 /* ReplayEndpointTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayEndpointTests.h; sourceTree = "<group>"; };
 		9F91971218EB776700D25B95 /* ReplayEndpointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayEndpointTests.m; sourceTree = "<group>"; };
 		9FA2F34E18E68B63000C0883 /* ReplayAPIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayAPIManager.h; sourceTree = "<group>"; };
 		9FA2F34F18E68B63000C0883 /* ReplayAPIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayAPIManager.m; sourceTree = "<group>"; };
@@ -173,8 +178,10 @@
 		9F83B54718E5FB1E0031A36B /* ReplayIOTests */ = {
 			isa = PBXGroup;
 			children = (
-				9F91971118EB776700D25B95 /* ReplayEndpointTests.h */,
+				9F1B804D18EC812800A47925 /* ReplayIOTests.m */,
+				9F1B804F18EC863A00A47925 /* ReplayAPIManagerTests.m */,
 				9F91971218EB776700D25B95 /* ReplayEndpointTests.m */,
+				9F1B805118EC900700A47925 /* ReplayConfigTests.m */,
 				9F83B54818E5FB1E0031A36B /* Supporting Files */,
 			);
 			path = ReplayIOTests;
@@ -337,7 +344,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F1B805218EC900700A47925 /* ReplayConfigTests.m in Sources */,
+				9F1B804E18EC812800A47925 /* ReplayIOTests.m in Sources */,
 				9F91971318EB776700D25B95 /* ReplayEndpointTests.m in Sources */,
+				9F1B805018EC863A00A47925 /* ReplayAPIManagerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

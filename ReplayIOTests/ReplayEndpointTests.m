@@ -6,44 +6,70 @@
 //  Copyright (c) 2014 Originate. All rights reserved.
 //
 
-#import "ReplayEndpointTests.h"
+#import <XCTest/XCTest.h>
 #import "ReplayEndpoint.h"
 #import "ReplayAPIManager.h"
+
+#define kTestApiKey @"testApiKey"
+#define kTestClientUUID @"testClientUUID"
+#define kTestSessionUUID @"testSessionUUID"
+
+#define kTestEventData @{@"test": @"event"}
+#define kTestAliasData @"Test Alias"
+#define kTestUnknownData @{@"unknown": @"unknown"}
+
+
+@interface ReplayEndpointTests : XCTestCase {
+  ReplayEndpoint* _endpointEventWithData;
+  ReplayEndpoint* _endpointEventWithNilData;
+  
+  ReplayEndpoint* _endpointAliasWithData;
+  ReplayEndpoint* _endpointAliasWithNilData;
+  
+  ReplayEndpoint* _endpointUnknownWithData;
+  ReplayEndpoint* _endpointUnknownWithNilData;
+}
+@end
+
 
 @implementation ReplayEndpointTests
 
 - (void)setUp {
-  [[ReplayAPIManager sharedManager] setAPIKey:@"testApiKey" clientUUID:@"testClientUUID" sessionUUID:@"testSessionUUID"];
+  [super setUp];
   
-  _endpointEventWithData      = [[ReplayEndpoint alloc] initWithEndpointName:@"Events" data:@{@"test": @"event"}];
+  [[ReplayAPIManager sharedManager] setAPIKey:kTestApiKey clientUUID:kTestClientUUID sessionUUID:kTestSessionUUID];
+  
+  _endpointEventWithData      = [[ReplayEndpoint alloc] initWithEndpointName:@"Events" data:kTestEventData];
   _endpointEventWithNilData   = [[ReplayEndpoint alloc] initWithEndpointName:@"Events" data:nil];
   
-  _endpointAliasWithData      = [[ReplayEndpoint alloc] initWithEndpointName:@"Alias" data:@"Test Alias"];
+  _endpointAliasWithData      = [[ReplayEndpoint alloc] initWithEndpointName:@"Alias" data:kTestAliasData];
   _endpointAliasWithNilData   = [[ReplayEndpoint alloc] initWithEndpointName:@"Alias" data:nil];
-
-  _endpointUnknownWithData    = [[ReplayEndpoint alloc] initWithEndpointName:@"UnknownEndpoint" data:@{@"test": @"unknown"}];
+  
+  _endpointUnknownWithData    = [[ReplayEndpoint alloc] initWithEndpointName:@"UnknownEndpoint" data:kTestUnknownData];
   _endpointUnknownWithNilData = [[ReplayEndpoint alloc] initWithEndpointName:@"UnknownEndpoint" data:nil];
 }
 
-- (void)tearDown {}
+- (void)tearDown {
+  [super tearDown];
+}
 
 
 #pragma mark - Endpoint Event with data
 
-- (void)testEndPointEventWithDataHasUrl {
+- (void)testEventWithDataHasUrl {
   XCTAssertNotNil(_endpointEventWithData.url, @"Event endpoint object should have a url");
 }
 
-- (void)testEndPointEventWithDataHasHttpMethod {
+- (void)testEventWithDataHasHttpMethod {
   XCTAssertEqual(_endpointEventWithData.httpMethod, @"POST", @"Event endpoint object should have HTTP method: POST");
 }
 
 - (void)testEndPointEventWithDataHasCorrectJsonData {
   
-  NSDictionary* correctJson = @{@"data"     : @{@"test": @"event"},
-                                @"replayKey": @"testApiKey",
-                                @"clientId" : @"testClientUUID",
-                                @"sessionId": @"testSessionUUID"};
+  NSDictionary* correctJson = @{@"data"     : kTestEventData,
+                                @"replayKey": kTestApiKey,
+                                @"clientId" : kTestClientUUID,
+                                @"sessionId": kTestSessionUUID};
   
   NSData* correctJsonData = [NSJSONSerialization dataWithJSONObject:correctJson options:0 error:nil];
   
@@ -53,19 +79,19 @@
 
 #pragma mark - Endpoint Alias with data
 
-- (void)testEndPointAliasWithDataHasUrl {
+- (void)testAliasWithDataHasUrl {
   XCTAssertNotNil(_endpointAliasWithData.url, @"Alias endpoint object should have a url");
 }
 
-- (void)testEndPointAliasWithDataHasHttpMethod {
+- (void)testAliasWithDataHasHttpMethod {
   XCTAssertEqual(_endpointAliasWithData.httpMethod, @"POST", @"Alias endpoint object should have HTTP method: POST");
 }
 
-- (void)testEndPointAliasWithDataHasCorrectJsonData {
+- (void)testAliasWithDataHasCorrectJsonData {
   
-  NSDictionary* correctJson = @{@"data"     : @{@"alias": @"Test Alias"},
-                                @"replayKey": @"testApiKey",
-                                @"clientId" : @"testClientUUID"};
+  NSDictionary* correctJson = @{@"data"     : @{@"alias": kTestAliasData},
+                                @"replayKey": kTestApiKey,
+                                @"clientId" : kTestClientUUID};
   
   NSData* correctJsonData = [NSJSONSerialization dataWithJSONObject:correctJson options:0 error:nil];
   
@@ -75,14 +101,14 @@
 
 #pragma mark - Unknown Alias with data
 
-- (void)testEndPointUnknownCallShouldReturnNilJSON {
+- (void)testUnknownCallShouldReturnNilJSON {
   
   [_endpointUnknownWithData callWithCompletionHandler:^(id json, NSError *error) {
     XCTAssertNil(json, @"Calling unknown endpoint should return nil JSON");
   }];
 }
 
-- (void)testEndPointUnknownCallShouldProduceError {
+- (void)testUnknownCallShouldProduceError {
   
   [_endpointUnknownWithData callWithCompletionHandler:^(id json, NSError *error) {
     XCTAssertEqual([error domain], ERROR_DOMAIN_REPLAY_IO, @"Calling unknown endpoint should produce an error");
@@ -92,20 +118,20 @@
 
 #pragma mark - Endpoint Event with nil data
 
-- (void)testEndPointEventWithNilDataHasUrl {
+- (void)testEventWithNilDataHasUrl {
   XCTAssertNotNil(_endpointEventWithNilData.url, @"Event endpoint object should have a url");
 }
 
-- (void)testEndPointEventWithNilDataHasHttpMethod {
+- (void)testEventWithNilDataHasHttpMethod {
   XCTAssertEqual(_endpointEventWithNilData.httpMethod, @"POST", @"Event endpoint object should have HTTP method: POST");
 }
 
-- (void)testEndPointEventWithNilDataHasCorrectJsonData {
+- (void)testEventWithNilDataHasCorrectJsonData {
   
   NSDictionary* correctJson = @{@"data"     : [NSNull null],
-                                @"replayKey": @"testApiKey",
-                                @"clientId" : @"testClientUUID",
-                                @"sessionId": @"testSessionUUID"};
+                                @"replayKey": kTestApiKey,
+                                @"clientId" : kTestClientUUID,
+                                @"sessionId": kTestSessionUUID};
   
   NSData* correctJsonData = [NSJSONSerialization dataWithJSONObject:correctJson options:0 error:nil];
   
@@ -115,19 +141,19 @@
 
 #pragma mark - Endpoint Alias with nil data
 
-- (void)testEndPointAliasWithNilDataHasUrl {
+- (void)testAliasWithNilDataHasUrl {
   XCTAssertNotNil(_endpointAliasWithNilData.url, @"Alias endpoint object should have a url");
 }
 
-- (void)testEndPointAliasWithNilDataHasHttpMethod {
+- (void)testAliasWithNilDataHasHttpMethod {
   XCTAssertEqual(_endpointAliasWithNilData.httpMethod, @"POST", @"Alias endpoint object should have HTTP method: POST");
 }
 
-- (void)testEndPointAliasWithNilDataHasCorrectJsonData {
+- (void)testAliasWithNilDataHasCorrectJsonData {
   
   NSDictionary* correctJson = @{@"data"     : @{@"alias": [NSNull null]},
-                                @"replayKey": @"testApiKey",
-                                @"clientId" : @"testClientUUID"};
+                                @"replayKey": kTestApiKey,
+                                @"clientId" : kTestClientUUID};
   
   NSData* correctJsonData = [NSJSONSerialization dataWithJSONObject:correctJson options:0 error:nil];
   
@@ -137,14 +163,14 @@
 
 #pragma mark - Unknown Alias with nil data
 
-- (void)testEndPointUnknownWithNilDataCallShouldReturnNilJSON {
+- (void)testUnknownWithNilDataCallShouldReturnNilJSON {
   
   [_endpointUnknownWithNilData callWithCompletionHandler:^(id json, NSError *error) {
     XCTAssertNil(json, @"Calling unknown endpoint should return nil JSON");
   }];
 }
 
-- (void)testEndPointUnknownWithNilDataCallShouldProduceError {
+- (void)testUnknownWithNilDataCallShouldProduceError {
   
   [_endpointUnknownWithNilData callWithCompletionHandler:^(id json, NSError *error) {
     XCTAssertEqual([error domain], ERROR_DOMAIN_REPLAY_IO, @"Calling unknown endpoint should produce an error");
