@@ -34,7 +34,7 @@ SYNTHESIZE_SINGLETON(ReplayConfig, sharedInstance);
     self.endpoints =
       @{@"Events": @{kPath  : @"events",
                      kMethod: @"POST",
-                     kJSON  : @{@"data"   : kContent,
+                     kJSON  : @{@"data"   : @{@"event" : kContent},
                                 kReplayKey: @"",
                                 kClientId : @"",
                                 kSessionId: @""}},

@@ -14,7 +14,7 @@
 #define kTestClientUUID @"testClientUUID"
 #define kTestSessionUUID @"testSessionUUID"
 
-#define kTestEventData @{@"test": @"event"}
+#define kTestEventData @{@"test": @"someEvent"}
 #define kTestAliasData @"Test Alias"
 #define kTestUnknownData @{@"unknown": @"unknown"}
 
@@ -66,7 +66,7 @@
 
 - (void)testEndPointEventWithDataHasCorrectJsonData {
   
-  NSDictionary* correctJson = @{@"data"     : kTestEventData,
+  NSDictionary* correctJson = @{@"data"     : @{@"event": kTestEventData},
                                 @"replayKey": kTestApiKey,
                                 @"clientId" : kTestClientUUID,
                                 @"sessionId": kTestSessionUUID};
@@ -128,7 +128,7 @@
 
 - (void)testEventWithNilDataHasCorrectJsonData {
   
-  NSDictionary* correctJson = @{@"data"     : [NSNull null],
+  NSDictionary* correctJson = @{@"data"     : @{@"event": [NSNull null]},
                                 @"replayKey": kTestApiKey,
                                 @"clientId" : kTestClientUUID,
                                 @"sessionId": kTestSessionUUID};
