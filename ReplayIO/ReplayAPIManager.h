@@ -17,6 +17,7 @@
 + (ReplayAPIManager *)sharedManager;
 
 - (void)setAPIKey:(NSString *)apiKey clientUUID:(NSString *)clientUUID sessionUUID:(NSString *)sessionUUID;
+- (void)updateSessionUUID:(NSString *)sessionUUID;
 
 - (NSURLRequest *)requestForEvent:(NSString *)eventName withData:(NSDictionary *)data;
 - (NSURLRequest *)requestForAlias:(NSString *)alias;

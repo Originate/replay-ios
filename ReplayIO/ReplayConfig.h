@@ -9,10 +9,12 @@
 #import <Foundation/Foundation.h>
 
 
-// Framework keys
+// JSON keys
 #define kReplayKey @"replayKey"
 #define kClientId  @"clientId"
 #define kSessionId @"sessionId"
 #define kData      @"data"
 
+// Replay.IO server url
 static NSString* const replayURL = @"http://0.0.0.0:3000/";
+

@@ -48,6 +48,9 @@
 }
 
 - (void)testRequestForEvent {
+  [_replayAPIManagerInstance1 setAPIKey:kTestApiKey
+                             clientUUID:kClientUUID
+                            sessionUUID:kSessionUUID];
   
   NSDictionary* correctJson = @{@"replayKey": kTestApiKey,
                                 @"clientId" : kClientUUID,
@@ -69,10 +72,13 @@
                 @"Request for event should have correct HTTP body");
   
   XCTAssertTrue([[request.URL absoluteString] rangeOfString:@"/events"].location != NSNotFound,
-                @"Request url should end with /events");
+                @"Request url should contain /events");
 }
 
 - (void)testRequestForAlias {
+  [_replayAPIManagerInstance1 setAPIKey:kTestApiKey
+                             clientUUID:kClientUUID
+                            sessionUUID:kSessionUUID];
   
   NSDictionary* correctJson = @{@"replayKey": kTestApiKey,
                                 @"clientId" : kClientUUID,
@@ -87,7 +93,7 @@
                 @"Request for alias should have correct HTTP body");
   
   XCTAssertTrue([[request.URL absoluteString] rangeOfString:@"/aliases"].location != NSNotFound,
-                @"Request url should end with /aliases");
+                @"Request url should contain /aliases");
 }
 
 @end

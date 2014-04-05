@@ -9,10 +9,38 @@
 #import <UIKit/UIKit.h>
 #import "ReplayIO.h"
 #import "ReplayAPIManager.h"
+#import "ReplaySessionManager.h"
 
 @implementation ReplayIO
 
 SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
+
+
+#pragma mark - Framework initialization
+
+// listen to app notifications
+// http://tech.radialpoint.com/2014/02/13/ios-frameworks-initializing-yourself-in-0-lines-of-code/
++ (void)load {
+  @autoreleasepool {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationDidEnterBackground:)
+                                                 name:UIApplicationDidEnterBackgroundNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationWillEnterForeground:)
+                                                 name:UIApplicationWillEnterForegroundNotification
+                                               object:nil];
+  }
+}
+
++ (void)applicationDidEnterBackground:(NSNotification *)notification {
+  [ReplaySessionManager endSession];
+}
+
++ (void)applicationWillEnterForeground:(NSNotification *)notification {
+  [[ReplayAPIManager sharedManager] updateSessionUUID:[ReplaySessionManager sessionUUID]];
+}
 
 
 #pragma mark - Convenience class methods
@@ -39,8 +67,8 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 - (void)trackWithAPIKey:(NSString *)apiKey {
   
   [[ReplayAPIManager sharedManager] setAPIKey:apiKey
-                                   clientUUID:[[[UIDevice currentDevice] identifierForVendor ] UUIDString]
-                                  sessionUUID:@"sessionID"];
+                                   clientUUID:[[[UIDevice currentDevice] identifierForVendor] UUIDString]
+                                  sessionUUID:[ReplaySessionManager sessionUUID]];
 }
 
 - (void)updateUserAlias:(NSString *)userAlias {

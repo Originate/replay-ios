@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 Originate. All rights reserved.
 //
 
-#import "ReplayIO.h"
 #import "ReplayAPIManager.h"
 #import "ReplayConfig.h"
 
@@ -31,6 +30,12 @@ SYNTHESIZE_SINGLETON(ReplayAPIManager, sharedManager);
   self.sessionUUID = sessionUUID;
   
   DEBUG_LOG(@"Tracking with\n  { API Key:      %@,\n    Client UUID:  %@,\n    Session UUID: %@ }", apiKey, clientUUID, sessionUUID);
+}
+
+- (void)updateSessionUUID:(NSString *)sessionUUID {
+  self.sessionUUID = sessionUUID;
+  
+  DEBUG_LOG(@"Session UUID: %@", sessionUUID);
 }
 
 
@@ -89,7 +94,7 @@ SYNTHESIZE_SINGLETON(ReplayAPIManager, sharedManager);
     [@{kReplayKey: self.apiKey,
        kClientId : self.clientUUID,
        kSessionId: self.sessionUUID,
-       @"data"   : dataJson} mutableCopy];
+       kData     : dataJson} mutableCopy];
 
   // add the key-value pairs to the dictionary under json[data]
   for (id key in data) {
