@@ -47,4 +47,47 @@
   XCTAssertEqualObjects(_replayAPIManagerInstance1.sessionUUID, kSessionUUID, @"ReplayAPIManager sessionUUID property should be set via setAPIKey:clientUUID:sessionUUID:");
 }
 
+- (void)testRequestForEvent {
+  
+  NSDictionary* correctJson = @{@"replayKey": kTestApiKey,
+                                @"clientId" : kClientUUID,
+                                @"sessionId": kSessionUUID,
+                                @"data"     : @{@"event": @"myEventName",
+                                                @"1"    : @"one",
+                                                @"2"    : @"two",
+                                                @"3"    : @"three"}};
+  
+  NSURLRequest* request = [_replayAPIManagerInstance1 requestForEvent:@"myEventName"
+                                                             withData:@{@"1": @"one",
+                                                                        @"2": @"two",
+                                                                        @"3": @"three"}];
+  
+  XCTAssertTrue([request.HTTPMethod isEqualToString:@"POST"],
+                @"Request for event should have HTTP Method: POST");
+  
+  XCTAssertTrue([request.HTTPBody isEqualToData:[NSJSONSerialization dataWithJSONObject:correctJson options:0 error:nil]],
+                @"Request for event should have correct HTTP body");
+  
+  XCTAssertTrue([[request.URL absoluteString] rangeOfString:@"/events"].location != NSNotFound,
+                @"Request url should end with /events");
+}
+
+- (void)testRequestForAlias {
+  
+  NSDictionary* correctJson = @{@"replayKey": kTestApiKey,
+                                @"clientId" : kClientUUID,
+                                @"alias"    : @"testAlias"};
+  
+  NSURLRequest* request = [_replayAPIManagerInstance1 requestForAlias:@"testAlias"];
+  
+  XCTAssertTrue([request.HTTPMethod isEqualToString:@"POST"],
+                @"Request for alias should have HTTP Method: POST");
+  
+  XCTAssertTrue([request.HTTPBody isEqualToData:[NSJSONSerialization dataWithJSONObject:correctJson options:0 error:nil]],
+                @"Request for alias should have correct HTTP body");
+  
+  XCTAssertTrue([[request.URL absoluteString] rangeOfString:@"/aliases"].location != NSNotFound,
+                @"Request url should end with /aliases");
+}
+
 @end

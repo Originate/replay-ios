@@ -25,8 +25,8 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
   [[ReplayIO sharedTracker] updateUserAlias:userAlias];
 }
 
-+ (void)trackEvent:(NSDictionary *)eventProperties {
-  [[ReplayIO sharedTracker] trackEvent:eventProperties];
++ (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties {
+  [[ReplayIO sharedTracker] trackEvent:eventName withProperties:eventProperties];
 }
 
 + (void)setDebugMode:(BOOL)debugMode {
@@ -44,21 +44,27 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 }
 
 - (void)updateUserAlias:(NSString *)userAlias {
+  NSURLRequest* request = [[ReplayAPIManager sharedManager] requestForAlias:userAlias];
   
-  [[ReplayAPIManager sharedManager] callEndpoint:@"Alias"
-                                        withData:userAlias
-                               completionHandler:^(id json, NSError* error) {
-                                 DEBUG_LOG(@"%@", error ?: json);
-                               }];
+  // TODO: queue request
+  
+  [NSURLConnection sendAsynchronousRequest:request
+                                     queue:[NSOperationQueue mainQueue]
+                         completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+    
+                         }];
 }
 
-- (void)trackEvent:(NSDictionary *)eventProperties {
-
-  [[ReplayAPIManager sharedManager] callEndpoint:@"Events"
-                                        withData:eventProperties
-                               completionHandler:^(id json, NSError* error) {
-                                  DEBUG_LOG(@"%@", error ?: json);
-                               }];
+- (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties {
+  NSURLRequest* request = [[ReplayAPIManager sharedManager] requestForEvent:eventName withData:eventProperties];
+  
+  // TODO: queue request
+  
+  [NSURLConnection sendAsynchronousRequest:request
+                                     queue:[NSOperationQueue mainQueue]
+                         completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                           
+                         }];
 }
 
 

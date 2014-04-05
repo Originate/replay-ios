@@ -19,7 +19,7 @@
 + (void)trackWithAPIKey:(NSString *)apiKey;
 
 // Public methods
-+ (void)trackEvent:(NSDictionary *)eventProperties;
++ (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties;
 + (void)updateUserAlias:(NSString *)userAlias;
 + (void)setDebugMode:(BOOL)debugMode;
 

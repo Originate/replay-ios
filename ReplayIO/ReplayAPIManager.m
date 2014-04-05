@@ -9,7 +9,6 @@
 #import "ReplayIO.h"
 #import "ReplayAPIManager.h"
 #import "ReplayConfig.h"
-#import "ReplayEndpoint.h"
 
 
 @interface ReplayAPIManager ()
@@ -27,8 +26,8 @@ SYNTHESIZE_SINGLETON(ReplayAPIManager, sharedManager);
        clientUUID:(NSString *)clientUUID
       sessionUUID:(NSString *)sessionUUID
 {
-  self.apiKey   = apiKey;
-  self.clientUUID = clientUUID;
+  self.apiKey      = apiKey;
+  self.clientUUID  = clientUUID;
   self.sessionUUID = sessionUUID;
   
   DEBUG_LOG(@"Tracking with\n  { API Key:      %@,\n    Client UUID:  %@,\n    Session UUID: %@ }", apiKey, clientUUID, sessionUUID);
@@ -37,25 +36,79 @@ SYNTHESIZE_SINGLETON(ReplayAPIManager, sharedManager);
 
 #pragma mark - Public methods
 
-- (void)callEndpoint:(NSString *)endpointName
-            withData:(id)data
-   completionHandler:(void (^)(id json, NSError* error)) handler
-{
+- (NSURLRequest *)requestForEvent:(NSString *)eventName withData:(NSDictionary *)data {
+  NSDictionary* json = [self jsonForEvent:eventName withData:data];
+  return [ReplayAPIManager postRequestTo:@"events" withBody:json];
+}
+
+- (NSURLRequest *)requestForAlias:(NSString *)alias {
+  NSDictionary* json = [self jsonForAlias:alias];
+  return [ReplayAPIManager postRequestTo:@"aliases" withBody:json];
+}
+
+
+#pragma mark - Helper methods
+
++ (NSData *)dataForDictionary:(NSDictionary *)dictionary {
+  if (![NSJSONSerialization isValidJSONObject:dictionary]) {
+    return nil;
+  }
+
+  NSError* error = nil;
+  NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                    options:0
+                                                      error:&error];
+  return jsonData;
+}
+
++ (NSURLRequest *)postRequestTo:(NSString *)path withBody:(NSDictionary *)bodyJSON {
+  NSURL* url   = [ReplayAPIManager urlWithPath:path];
+  NSData* body = [ReplayAPIManager dataForDictionary:bodyJSON];
   
-  ReplayEndpoint* endpoint = [[ReplayEndpoint alloc] initWithEndpointName:endpointName data:data];
-  [endpoint callWithCompletionHandler:^(id json, NSError* error) {
-    handler(json, error);
-  }];
+  NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];
+  [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+  [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+  [request setHTTPMethod:@"POST"];
+  [request setHTTPBody:body];
+  
+  return request;
+}
+
++ (NSURL *)urlWithPath:(NSString *)path {
+  return [NSURL URLWithString:path relativeToURL:[NSURL URLWithString:replayURL]];
 }
 
 
-#pragma mark -
+#pragma mark - Endpoint payload definitions
 
-+ (NSString *)mapLocalKeyFromServerKey:(NSString *)serverKey {
-  NSDictionary* mapping = @{kReplayKey: @"apiKey",
-                            kClientId : @"clientUUID",
-                            kSessionId: @"sessionUUID"};
-  return mapping[serverKey];
+- (NSDictionary *)jsonForEvent:(NSString *)eventName withData:(NSDictionary *)data {
+  NSMutableDictionary* dataJson =
+    [@{@"event": eventName} mutableCopy];
+  
+  NSMutableDictionary* json =
+    [@{kReplayKey: self.apiKey,
+       kClientId : self.clientUUID,
+       kSessionId: self.sessionUUID,
+       @"data"   : dataJson} mutableCopy];
+
+  // add the key-value pairs to the dictionary under json[data]
+  for (id key in data) {
+    if ([key respondsToSelector:@selector(isEqualToString:)] && ![key isEqualToString:@"event"]) {
+      [dataJson setObject:data[key] forKey:key];
+    }
+  }
+  
+  return json;
 }
+
+- (NSDictionary *)jsonForAlias:(NSString *)alias {
+  NSDictionary* json =
+    @{kReplayKey: self.apiKey,
+      kClientId : self.clientUUID,
+      @"alias"  : alias};
+  
+  return json;
+}
+
 
 @end
