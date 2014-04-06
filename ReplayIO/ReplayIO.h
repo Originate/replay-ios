@@ -20,7 +20,7 @@
 
 // Public methods
 + (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties;
-+ (void)updateUserAlias:(NSString *)userAlias;
++ (void)updateAlias:(NSString *)userAlias;
 + (void)setDebugMode:(BOOL)debugMode;
 
 @end

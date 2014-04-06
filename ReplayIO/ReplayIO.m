@@ -49,8 +49,8 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
   [[ReplayIO sharedTracker] trackWithAPIKey:apiKey];
 }
 
-+ (void)updateUserAlias:(NSString *)userAlias {
-  [[ReplayIO sharedTracker] updateUserAlias:userAlias];
++ (void)updateAlias:(NSString *)userAlias {
+  [[ReplayIO sharedTracker] updateAlias:userAlias];
 }
 
 + (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties {
@@ -71,7 +71,7 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
                                   sessionUUID:[ReplaySessionManager sessionUUID]];
 }
 
-- (void)updateUserAlias:(NSString *)userAlias {
+- (void)updateAlias:(NSString *)userAlias {
   NSURLRequest* request = [[ReplayAPIManager sharedManager] requestForAlias:userAlias];
   
   // TODO: queue request
