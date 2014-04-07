@@ -11,6 +11,16 @@
 #import "ReplayAPIManager.h"
 #import "ReplaySessionManager.h"
 
+
+#define CONTINUE_IF_REPLAY_IS_ENABLED do {  \
+  if (!self.enabled) { return; }            \
+} while(0)
+
+
+@interface ReplayIO ()
+@property (nonatomic, setter = isEnabled:) BOOL enabled;
+@end
+
 @implementation ReplayIO
 
 SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
@@ -61,6 +71,14 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
   [[ReplayIO sharedTracker] setDebugMode:debugMode];
 }
 
++ (void)enable {
+  [[ReplayIO sharedTracker] isEnabled:YES];
+}
+
++ (void)disable {
+  [[ReplayIO sharedTracker] isEnabled:NO];
+}
+
 
 #pragma mark - Underlying instance methods
 
@@ -72,6 +90,8 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 }
 
 - (void)updateAlias:(NSString *)userAlias {
+  CONTINUE_IF_REPLAY_IS_ENABLED;
+  
   NSURLRequest* request = [[ReplayAPIManager sharedManager] requestForAlias:userAlias];
   
   // TODO: queue request
@@ -84,6 +104,8 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 }
 
 - (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties {
+  CONTINUE_IF_REPLAY_IS_ENABLED;
+  
   NSURLRequest* request = [[ReplayAPIManager sharedManager] requestForEvent:eventName withData:eventProperties];
   
   // TODO: queue request

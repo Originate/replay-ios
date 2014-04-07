@@ -54,18 +54,6 @@ SYNTHESIZE_SINGLETON(ReplayAPIManager, sharedManager);
 
 #pragma mark - Helper methods
 
-+ (NSData *)dataForDictionary:(NSDictionary *)dictionary {
-  if (![NSJSONSerialization isValidJSONObject:dictionary]) {
-    return nil;
-  }
-
-  NSError* error = nil;
-  NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                    options:0
-                                                      error:&error];
-  return jsonData;
-}
-
 + (NSURLRequest *)postRequestTo:(NSString *)path withBody:(NSDictionary *)bodyJSON {
   NSURL* url   = [ReplayAPIManager urlWithPath:path];
   NSData* body = [ReplayAPIManager dataForDictionary:bodyJSON];
@@ -77,6 +65,18 @@ SYNTHESIZE_SINGLETON(ReplayAPIManager, sharedManager);
   [request setHTTPBody:body];
   
   return request;
+}
+
++ (NSData *)dataForDictionary:(NSDictionary *)dictionary {
+  if (![NSJSONSerialization isValidJSONObject:dictionary]) {
+    return nil;
+  }
+
+  NSError* error = nil;
+  NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                    options:0
+                                                      error:&error];
+  return jsonData;
 }
 
 + (NSURL *)urlWithPath:(NSString *)path {

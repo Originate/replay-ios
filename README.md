@@ -72,3 +72,10 @@ The framework lives as a singleton in your app. For convenience, all instance me
 ```obj-c
 [ReplayIO setDebugMode:YES];
 ```
+
+### Enable/disable
+
+```obj-c
+[ReplayIO enable];
+[ReplayIO disable];
+```

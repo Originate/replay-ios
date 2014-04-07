@@ -22,5 +22,7 @@
 + (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties;
 + (void)updateAlias:(NSString *)userAlias;
 + (void)setDebugMode:(BOOL)debugMode;
++ (void)enable;
++ (void)disable;
 
 @end
