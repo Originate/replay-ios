@@ -34,8 +34,6 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
     self.requestQueue = [NSMutableArray array];
     self.queueMode    = ReplayQueueModeAutomatic;
     self.currentlyProcessingQueue = NO;
-    
-    DEBUG_LOG(@"Reachability set for: %@", REPLAY_HOST);
   }
   return self;
 }

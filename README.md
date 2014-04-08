@@ -28,17 +28,26 @@ This class manages the endpoints. For each endpoint, there should be a correspon
 
 ### ReplayQueue
 
-This class queues the URL requests created by ReplayAPIManager.
+This class queues the URL requests created by ReplayAPIManager. All requests to be sent out are enqueued by ReplayQueue and dequeued according to the dispatch mode.
 
-Possible features:
+| Automatic Mode       | Dispatch Mode                                                             |
+|----------------------|---------------------------------------------------------------------------|
+| Dequeued immediately | Dequeued manually via `dispatch` or automatically with `dispatchInterval` |
 
-* Batch dispatching
+The dequeue method will attempt to send off all requests in the queue synchronously. When connectivity problems prevent a request from succeeding, the dequeueing will stop.
+
+A [popular third-party fork](https://github.com/tonymillion/Reachability) of Apple's Reachability class is used to detect changes to internet availability. When Reachability notifies the ReplayQueue that "there is internet," ReplayQueue will reattempt to dequeue all pending requests.
+
+
+Possible TODOs:
+
+* Batch dispatching (send several requests in a single HTTP request, requires server support)
 * Request rate limiting
-* Store requests when internet connection is unavailable
+* Save requests to disk when internet is unavailable and app closes
 
 ### Tests
 
-We have tests, write and use them! Haven't been able to automatically run tests before building.
+We have tests, write and use them! Xcode 5 seems to have [removed](http://stackoverflow.com/questions/20605509/how-do-i-automatically-perform-unit-tests-on-each-build-and-run-action-in-xcod) the option to automatically test after building.
 
 ## Documentation for framework users
 
@@ -47,11 +56,12 @@ The framework lives as a singleton in your app. For convenience, all instance me
 ### Installation
 
 1. Add *ReplayIO.framework* to your project
-2. Import the header file
+2. Add *SystemConfiguration.framework* under "Link Binary With Libraries" section of "Build Phases"
+3. Import the header file
  
 	```#import <ReplayIO/ReplayIO.h>```
 
-3. Initialize the tracker
+4. Initialize the tracker
 
 	```[ReplayIO trackWithAPIKey:@"Your API Key"];```
 	
