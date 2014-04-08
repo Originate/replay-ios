@@ -85,6 +85,8 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 
 - (void)trackWithAPIKey:(NSString *)apiKey {
   
+  self.enabled = YES;
+  
   [[ReplayAPIManager sharedManager] setAPIKey:apiKey
                                    clientUUID:[[[UIDevice currentDevice] identifierForVendor] UUIDString]
                                   sessionUUID:[ReplaySessionManager sessionUUID]];
