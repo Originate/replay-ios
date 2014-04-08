@@ -8,8 +8,23 @@
 
 #import <Foundation/Foundation.h>
 
+
+typedef NS_ENUM(NSInteger, ReplayQueueMode) {
+  ReplayQueueModeAutomatic = 0,
+  ReplayQueueModeDispatch  = 1,
+};
+
+
+@class Reachability;
+
 @interface ReplayQueue : NSObject
 
 + (ReplayQueue *)sharedQueue;
+- (void)enqueue:(NSURLRequest *)request;
+- (void)dispatch;
+
+@property (nonatomic) Reachability* reachability;
+@property (nonatomic, strong) NSMutableArray* requestQueue;
+@property (nonatomic) NSInteger queueMode;
 
 @end

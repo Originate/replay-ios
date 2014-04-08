@@ -32,8 +32,19 @@
   XCTAssertEqualObjects(_replayQueue1, _replayQueue2, @"ReplayQueue should be a singleton");
 }
 
-- (void)test {
+- (void)testEnqueueInDispatchMode {
+  int queueCountBefore = [_replayQueue1.requestQueue count];
   
+  _replayQueue1.queueMode = ReplayQueueModeDispatch;
+  
+  NSURLRequest* urlRequest = [[NSURLRequest alloc] init];
+  [_replayQueue1 enqueue:urlRequest];
+  
+  int queueCountAfter = [_replayQueue1.requestQueue count];
+  
+  XCTAssert(queueCountBefore + 1 == queueCountAfter, @"Enqueuing in dispatch mode should increase the queue size");
 }
+
+// TODO: figure out how to test the networking/async stuff
 
 @end

@@ -45,6 +45,7 @@
 		9F9196F518EA48D200D25B95 /* ReplayHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F9196F318EA48D200D25B95 /* ReplayHelper.h */; };
 		9FA2F35018E68B63000C0883 /* ReplayAPIManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FA2F34E18E68B63000C0883 /* ReplayAPIManager.h */; };
 		9FA2F35118E68B63000C0883 /* ReplayAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA2F34F18E68B63000C0883 /* ReplayAPIManager.m */; };
+		9FB5CD6418F383EE00D4085C /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB5CD6318F383EE00D4085C /* SystemConfiguration.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +103,7 @@
 		9F9196F318EA48D200D25B95 /* ReplayHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayHelper.h; sourceTree = "<group>"; };
 		9FA2F34E18E68B63000C0883 /* ReplayAPIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayAPIManager.h; sourceTree = "<group>"; };
 		9FA2F34F18E68B63000C0883 /* ReplayAPIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayAPIManager.m; sourceTree = "<group>"; };
+		9FB5CD6318F383EE00D4085C /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +119,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FB5CD6418F383EE00D4085C /* SystemConfiguration.framework in Frameworks */,
 				9F83B54618E5FB1E0031A36B /* libReplayIO.a in Frameworks */,
 				9F83B54018E5FB1E0031A36B /* XCTest.framework in Frameworks */,
 				9F83B54318E5FB1E0031A36B /* UIKit.framework in Frameworks */,
@@ -158,6 +161,7 @@
 		9F83B53018E5FB1E0031A36B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9FB5CD6318F383EE00D4085C /* SystemConfiguration.framework */,
 				9F83B53118E5FB1E0031A36B /* Foundation.framework */,
 				9F83B53F18E5FB1E0031A36B /* XCTest.framework */,
 				9F83B54218E5FB1E0031A36B /* UIKit.framework */,

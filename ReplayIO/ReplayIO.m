@@ -10,6 +10,7 @@
 #import "ReplayIO.h"
 #import "ReplayAPIManager.h"
 #import "ReplaySessionManager.h"
+#import "ReplayQueue.h"
 
 
 #define CONTINUE_IF_REPLAY_IS_ENABLED do {  \
@@ -94,13 +95,7 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
   
   NSURLRequest* request = [[ReplayAPIManager sharedManager] requestForAlias:userAlias];
   
-  // TODO: queue request
-  
-  [NSURLConnection sendAsynchronousRequest:request
-                                     queue:[NSOperationQueue mainQueue]
-                         completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-    
-                         }];
+  [[ReplayQueue sharedQueue] enqueue:request];
 }
 
 - (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties {
@@ -108,13 +103,7 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
   
   NSURLRequest* request = [[ReplayAPIManager sharedManager] requestForEvent:eventName withData:eventProperties];
   
-  // TODO: queue request
-  
-  [NSURLConnection sendAsynchronousRequest:request
-                                     queue:[NSOperationQueue mainQueue]
-                         completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                           
-                         }];
+  [[ReplayQueue sharedQueue] enqueue:request];
 }
 
 

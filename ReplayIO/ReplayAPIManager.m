@@ -90,11 +90,11 @@ SYNTHESIZE_SINGLETON(ReplayAPIManager, sharedManager);
   NSMutableDictionary* dataJson =
     [@{@"event": eventName} mutableCopy];
   
-  NSMutableDictionary* json =
-    [@{kReplayKey: self.apiKey,
-       kClientId : self.clientUUID,
-       kSessionId: self.sessionUUID,
-       kData     : dataJson} mutableCopy];
+  NSDictionary* json =
+    @{kReplayKey: self.apiKey,
+      kClientId : self.clientUUID,
+      kSessionId: self.sessionUUID,
+      kData     : dataJson};
 
   // add the key-value pairs to the dictionary under json[data]
   for (id key in data) {
