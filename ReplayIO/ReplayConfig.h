@@ -16,5 +16,6 @@
 #define kData      @"data"
 
 // Replay.IO server url
-static NSString* const replayURL = @"http://0.0.0.0:3000/";
+static NSString* const replayURL  = @"http://0.0.0.0:3000/";
+static NSString* const replayHost = @"0.0.0.0:3000";
 

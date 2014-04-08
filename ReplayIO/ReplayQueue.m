@@ -10,6 +10,11 @@
 #import "Reachability/Reachability.h"
 
 
+@interface ReplayQueue ()
+@property (nonatomic) BOOL currentlyProcessingQueue;
+@end
+
+
 @implementation ReplayQueue
 
 SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
@@ -23,11 +28,12 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
                                                object:nil];
     
     // TODO: use [Reachability reachabilityForAddress] ?
-    self.reachability = [Reachability reachabilityForInternetConnection];
+    self.reachability = [Reachability reachabilityWithHostname:@"google.com"];
     [self.reachability startNotifier];
     
     self.requestQueue = [NSMutableArray array];
     self.queueMode    = ReplayQueueModeAutomatic;
+    self.currentlyProcessingQueue = NO;
   }
   return self;
 }
@@ -39,10 +45,13 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
   
   Reachability* reachability = [notification object];
   
-  // internet is available now
+  // ReplayIO server is reachable now
   if (reachability.currentReachabilityStatus != NotReachable) {
     DEBUG_LOG(@"Reachability: reachable");
     [self dequeue];
+  }
+  else {
+    DEBUG_LOG(@"Reachability: unreachable");
   }
 }
 
@@ -71,41 +80,49 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
 
 #pragma mark - Helpers
 
+// send off a single request
+// if it's successful, send off the next request in the queue
 - (void)sendAsynchronousRequest:(NSURLRequest *)request {
-  DEBUG_LOG(@"Sending request");
+  DEBUG_LOG(@"Sending request...");
   
   [NSURLConnection sendAsynchronousRequest:request
                                      queue:[NSOperationQueue mainQueue]
                          completionHandler:^(NSURLResponse* response, NSData* data, NSError* connectionError) {
                            // success - remove request from queue and process next item
                            if (!connectionError) {
-                             DEBUG_LOG(@"Sent successfully");
-                             DEBUG_LOG(@"Size before removing first element: %lu", (unsigned long)[self.requestQueue count]);
+                             DEBUG_LOG(@"  Sent successfully");
                              
                              [self.requestQueue removeObjectAtIndex:0];
                              
-                             DEBUG_LOG(@"Size after removing first element: %lu", (unsigned long)[self.requestQueue count]);
+                             DEBUG_LOG(@"  Elements left in queue: %lu", (unsigned long)[self.requestQueue count]);
                              
                              if ([self.requestQueue count] > 0) {
                                NSURLRequest* nextRequest = [self.requestQueue objectAtIndex:0];
                                [self sendAsynchronousRequest:nextRequest];
+                               return;
                              }
                            }
                            
                            // failure
                            else {
-                             DEBUG_LOG(@"Sent failure");
-                             DEBUG_LOG(@"How many elements in queue: %lu", (unsigned long)[self.requestQueue count]);
+                             DEBUG_LOG(@"  Sent failure");
+                             DEBUG_LOG(@"  Elements left in queue: %lu", (unsigned long)[self.requestQueue count]);
                              // wait for Reachability to trigger -dequeue
                            }
+                           
+                           self.currentlyProcessingQueue = NO;
                          }];
 }
 
+// attempt to send off all requests in the queue
 - (void)dequeue {
-  NSURLRequest* firstRequest = [self.requestQueue objectAtIndex:0];
-  
-  if (firstRequest) {
-    [self sendAsynchronousRequest:firstRequest];
+  if (!self.currentlyProcessingQueue && [self.requestQueue count] > 0) {
+    NSURLRequest* firstRequest = [self.requestQueue objectAtIndex:0];
+    
+    if (firstRequest) {
+      self.currentlyProcessingQueue = YES;
+      [self sendAsynchronousRequest:firstRequest];
+    }
   }
 }
 
