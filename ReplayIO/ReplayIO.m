@@ -26,6 +26,14 @@
 
 SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 
+- (instancetype)init {
+  self = [super init];
+  if (self) {
+    self.enabled = YES;
+  }
+  return self;
+}
+
 
 #pragma mark - Framework initialization
 
@@ -84,8 +92,6 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 #pragma mark - Underlying instance methods
 
 - (void)trackWithAPIKey:(NSString *)apiKey {
-  
-  self.enabled = YES;
   
   [[ReplayAPIManager sharedManager] setAPIKey:apiKey
                                    clientUUID:[[[UIDevice currentDevice] identifierForVendor] UUIDString]

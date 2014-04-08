@@ -80,7 +80,7 @@ SYNTHESIZE_SINGLETON(ReplayAPIManager, sharedManager);
 }
 
 + (NSURL *)urlWithPath:(NSString *)path {
-  return [NSURL URLWithString:path relativeToURL:[NSURL URLWithString:replayURL]];
+  return [NSURL URLWithString:path relativeToURL:[NSURL URLWithString:REPLAY_URL]];
 }
 
 

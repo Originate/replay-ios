@@ -8,6 +8,7 @@
 
 #import "ReplayQueue.h"
 #import "Reachability/Reachability.h"
+#import "ReplayConfig.h"
 
 
 @interface ReplayQueue ()
@@ -27,13 +28,14 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
                                                  name:kReachabilityChangedNotification
                                                object:nil];
     
-    // TODO: use [Reachability reachabilityForAddress] ?
-    self.reachability = [Reachability reachabilityWithHostname:@"google.com"];
+    self.reachability = [Reachability reachabilityForInternetConnection];
     [self.reachability startNotifier];
     
     self.requestQueue = [NSMutableArray array];
     self.queueMode    = ReplayQueueModeAutomatic;
     self.currentlyProcessingQueue = NO;
+    
+    DEBUG_LOG(@"Reachability set for: %@", REPLAY_HOST);
   }
   return self;
 }
@@ -41,17 +43,15 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
 #pragma mark - Reachability notifications
 
 - (void)reachabilityChanged:(NSNotification *)notification {
-  DEBUG_LOG(@"Reachability changed");
-  
   Reachability* reachability = [notification object];
   
   // ReplayIO server is reachable now
-  if (reachability.currentReachabilityStatus != NotReachable) {
-    DEBUG_LOG(@"Reachability: reachable");
+  if ([reachability isReachable]) {
+    DEBUG_LOG(@">>>>> Reachability: reachable");
     [self dequeue];
   }
   else {
-    DEBUG_LOG(@"Reachability: unreachable");
+    DEBUG_LOG(@">>>>> Reachability: unreachable");
   }
 }
 
@@ -61,14 +61,14 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
 - (void)enqueue:(NSURLRequest *)request {
   // automatic mode: send request immediately
   if (self.queueMode == ReplayQueueModeAutomatic) {
-    DEBUG_LOG(@"Enqueuing request - automatic mode");
+    DEBUG_LOG(@"Enqueuing request (automatic mode)");
     [self.requestQueue addObject:request];
     [self dequeue];
   }
   
   // dispatch mode: enqueue the request
   else {
-    DEBUG_LOG(@"Enqueuing request - dispatch mode");
+    DEBUG_LOG(@"Enqueuing request (dispatch mode)");
     [self.requestQueue addObject:request];
   }
 }
@@ -94,7 +94,7 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
                              
                              [self.requestQueue removeObjectAtIndex:0];
                              
-                             DEBUG_LOG(@"  Elements left in queue: %lu", (unsigned long)[self.requestQueue count]);
+                             DEBUG_LOG(@"  Requests remaining in queue: %lu", (unsigned long)[self.requestQueue count]);
                              
                              if ([self.requestQueue count] > 0) {
                                NSURLRequest* nextRequest = [self.requestQueue objectAtIndex:0];
@@ -103,11 +103,10 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
                              }
                            }
                            
-                           // failure
+                           // failure - wait for Reachability notification to call dequeue
                            else {
                              DEBUG_LOG(@"  Sent failure");
-                             DEBUG_LOG(@"  Elements left in queue: %lu", (unsigned long)[self.requestQueue count]);
-                             // wait for Reachability to trigger -dequeue
+                             DEBUG_LOG(@"  Requests remaining in queue: %lu", (unsigned long)[self.requestQueue count]);
                            }
                            
                            self.currentlyProcessingQueue = NO;
@@ -118,11 +117,12 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
 - (void)dequeue {
   if (!self.currentlyProcessingQueue && [self.requestQueue count] > 0) {
     NSURLRequest* firstRequest = [self.requestQueue objectAtIndex:0];
-    
-    if (firstRequest) {
-      self.currentlyProcessingQueue = YES;
-      [self sendAsynchronousRequest:firstRequest];
-    }
+
+    self.currentlyProcessingQueue = YES;
+    [self sendAsynchronousRequest:firstRequest];
+  }
+  else {
+    DEBUG_LOG(@"Request in progress, can't dequeue");
   }
 }
 
