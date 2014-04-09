@@ -11,9 +11,9 @@
 #import "ReplayConfig.h"
 
 typedef NS_ENUM(NSUInteger, ReplayDispatchMode) {
-  kReplayDispatchModeAuto   = 1 << 0,
-  kReplayDispatchModeManual = 1 << 1,
-  kReplayDispatchModeTimer  = 1 << 2
+  kReplayDispatchModeAuto   = 1,
+  kReplayDispatchModeManual = 2,
+  kReplayDispatchModeTimer  = 3
 };
 
 
@@ -52,7 +52,7 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
   
   // we have internet access so try to dequeue now
   if ([reachability isReachable] &&
-      (self.dispatchMode & (kReplayDispatchModeTimer | kReplayDispatchModeManual)))
+      (self.dispatchMode == kReplayDispatchModeTimer || self.dispatchMode == kReplayDispatchModeAuto))
   {
     DEBUG_LOG(@">>>>> Reachability: reachable");
     [self dequeue];
@@ -71,7 +71,7 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
   [self.requestQueue addObject:request];
   
   // immediate dispatching
-  if (self.dispatchMode & kReplayDispatchModeAuto) {
+  if (self.dispatchMode == kReplayDispatchModeAuto) {
     [self dequeue];
   }
 }
