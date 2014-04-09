@@ -10,9 +10,16 @@
 #import "Reachability/Reachability.h"
 #import "ReplayConfig.h"
 
+typedef NS_ENUM(NSUInteger, ReplayDispatchMode) {
+  kReplayDispatchModeAuto   = 1 << 0,
+  kReplayDispatchModeManual = 1 << 1,
+  kReplayDispatchModeTimer  = 1 << 2
+};
+
 
 @interface ReplayQueue ()
 @property (nonatomic) BOOL currentlyProcessingQueue;
+@property (nonatomic) ReplayDispatchMode dispatchMode;
 @end
 
 
@@ -31,8 +38,8 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
     self.reachability = [Reachability reachabilityForInternetConnection];
     [self.reachability startNotifier];
     
-    self.requestQueue     = [NSMutableArray array];
-    self.dispatchInterval = 0;
+    self.requestQueue             = [NSMutableArray array];
+    self.dispatchInterval         = 0;
     self.currentlyProcessingQueue = NO;
   }
   return self;
@@ -43,8 +50,10 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
 - (void)reachabilityChanged:(NSNotification *)notification {
   Reachability* reachability = [notification object];
   
-  // ReplayIO server is reachable now
-  if ([reachability isReachable]) {
+  // we have internet access so try to dequeue now
+  if ([reachability isReachable] &&
+      (self.dispatchMode & (kReplayDispatchModeTimer | kReplayDispatchModeManual)))
+  {
     DEBUG_LOG(@">>>>> Reachability: reachable");
     [self dequeue];
   }
@@ -59,17 +68,35 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
 - (void)enqueue:(NSURLRequest *)request {
   DEBUG_LOG(@"Enqueuing request (t = %li)", (long)self.dispatchInterval);
   
-  if (self.dispatchInterval == 0) {
-    [self.requestQueue addObject:request];
+  [self.requestQueue addObject:request];
+  
+  // immediate dispatching
+  if (self.dispatchMode & kReplayDispatchModeAuto) {
     [self dequeue];
-  }
-  else {
-    [self.requestQueue addObject:request];
   }
 }
 
 - (void)dispatch {
+  DEBUG_LOG(@"Manual dispatch");
+  
   [self dequeue];
+}
+
+- (void)setDispatchInterval:(NSInteger)dispatchInterval {
+  _dispatchInterval = dispatchInterval;
+  
+  // manual dispatching
+  if (dispatchInterval < 0) {
+    self.dispatchMode = kReplayDispatchModeManual;
+  }
+  // immediate dispatching
+  else if (dispatchInterval == 0) {
+    self.dispatchMode = kReplayDispatchModeAuto;
+  }
+  // timer-based dispatching
+  else {
+    self.dispatchMode = kReplayDispatchModeTimer;
+  }
 }
 
 
