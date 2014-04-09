@@ -31,8 +31,8 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
     self.reachability = [Reachability reachabilityForInternetConnection];
     [self.reachability startNotifier];
     
-    self.requestQueue = [NSMutableArray array];
-    self.queueMode    = ReplayQueueModeAutomatic;
+    self.requestQueue     = [NSMutableArray array];
+    self.dispatchInterval = 0;
     self.currentlyProcessingQueue = NO;
   }
   return self;
@@ -57,16 +57,13 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
 #pragma mark - Public methods
 
 - (void)enqueue:(NSURLRequest *)request {
-  // automatic mode: send request immediately
-  if (self.queueMode == ReplayQueueModeAutomatic) {
-    DEBUG_LOG(@"Enqueuing request (automatic mode)");
+  DEBUG_LOG(@"Enqueuing request (t = %li)", (long)self.dispatchInterval);
+  
+  if (self.dispatchInterval == 0) {
     [self.requestQueue addObject:request];
     [self dequeue];
   }
-  
-  // dispatch mode: enqueue the request
   else {
-    DEBUG_LOG(@"Enqueuing request (dispatch mode)");
     [self.requestQueue addObject:request];
   }
 }

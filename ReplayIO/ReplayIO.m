@@ -13,8 +13,8 @@
 #import "ReplayQueue.h"
 
 
-#define CONTINUE_IF_REPLAY_IS_ENABLED do {  \
-  if (!self.enabled) { return; }            \
+#define CONTINUE_IF_REPLAY_IS_ENABLED do {           \
+  if (![ReplayIO sharedTracker].enabled) { return; } \
 } while(0)
 
 
@@ -69,10 +69,12 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 }
 
 + (void)updateAlias:(NSString *)userAlias {
+  CONTINUE_IF_REPLAY_IS_ENABLED;
   [[ReplayIO sharedTracker] updateAlias:userAlias];
 }
 
 + (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties {
+  CONTINUE_IF_REPLAY_IS_ENABLED;
   [[ReplayIO sharedTracker] trackEvent:eventName withProperties:eventProperties];
 }
 
@@ -88,6 +90,14 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
   [[ReplayIO sharedTracker] isEnabled:NO];
 }
 
++ (void)setDispatchInterval:(NSInteger)interval {
+  [[ReplayQueue sharedQueue] setDispatchInterval:interval];
+}
+
++ (void)dispatch {
+  [[ReplayQueue sharedQueue] dispatch];
+}
+
 
 #pragma mark - Underlying instance methods
 
@@ -99,18 +109,14 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 }
 
 - (void)updateAlias:(NSString *)userAlias {
-  CONTINUE_IF_REPLAY_IS_ENABLED;
-  
   NSURLRequest* request = [[ReplayAPIManager sharedManager] requestForAlias:userAlias];
   
   [[ReplayQueue sharedQueue] enqueue:request];
 }
 
 - (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties {
-  CONTINUE_IF_REPLAY_IS_ENABLED;
-  
   NSURLRequest* request = [[ReplayAPIManager sharedManager] requestForEvent:eventName withData:eventProperties];
-  
+
   [[ReplayQueue sharedQueue] enqueue:request];
 }
 

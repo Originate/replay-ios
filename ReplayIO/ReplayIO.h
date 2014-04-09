@@ -21,8 +21,13 @@
 // Public methods
 + (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties;
 + (void)updateAlias:(NSString *)userAlias;
-+ (void)setDebugMode:(BOOL)debugMode;
+
++ (void)setDispatchInterval:(NSInteger)interval;
++ (void)dispatch;
+
 + (void)enable;
 + (void)disable;
+
++ (void)setDebugMode:(BOOL)debugMode;
 
 @end
