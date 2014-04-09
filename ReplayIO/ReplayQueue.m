@@ -83,15 +83,17 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
 - (void)sendAsynchronousRequest:(NSURLRequest *)request {
   DEBUG_LOG(@"Sending request...");
   
-  [NSURLConnection sendAsynchronousRequest:request
+  NSMutableURLRequest* requestWithShorterTimeout = [request mutableCopy];
+  [requestWithShorterTimeout setTimeoutInterval:15]; // default of 60 sec is too long
+  
+  [NSURLConnection sendAsynchronousRequest:requestWithShorterTimeout
                                      queue:[NSOperationQueue mainQueue]
                          completionHandler:^(NSURLResponse* response, NSData* data, NSError* connectionError) {
                            // success - remove request from queue and process next item
                            if (!connectionError) {
-                             DEBUG_LOG(@"  Sent successfully");
-                             
                              [self.requestQueue removeObjectAtIndex:0];
                              
+                             DEBUG_LOG(@"  Sent successfully");
                              DEBUG_LOG(@"  Requests remaining in queue: %lu", (unsigned long)[self.requestQueue count]);
                              
                              if ([self.requestQueue count] > 0) {
@@ -114,13 +116,13 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
 // attempt to send off all requests in the queue
 - (void)dequeue {
   if (!self.currentlyProcessingQueue && [self.requestQueue count] > 0) {
-    NSURLRequest* firstRequest = [self.requestQueue objectAtIndex:0];
-
     self.currentlyProcessingQueue = YES;
+    
+    NSURLRequest* firstRequest = [self.requestQueue objectAtIndex:0];
     [self sendAsynchronousRequest:firstRequest];
   }
   else {
-    DEBUG_LOG(@"Request in progress, can't dequeue");
+    DEBUG_LOG(@"Can't dequeue -- request in progress OR empty queue");
   }
 }
 
