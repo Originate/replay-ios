@@ -32,15 +32,15 @@
   XCTAssertEqualObjects(_replayQueue1, _replayQueue2, @"ReplayQueue should be a singleton");
 }
 
-- (void)testEnqueueInDispatchMode {
-  int queueCountBefore = [_replayQueue1.requestQueue count];
+- (void)testEnqueueWithManualDispatch {
+  NSUInteger queueCountBefore = [_replayQueue1.requestQueue count];
   
-  _replayQueue1.queueMode = ReplayQueueModeDispatch;
+  [_replayQueue1 setDispatchInterval:-1];
   
   NSURLRequest* urlRequest = [[NSURLRequest alloc] init];
   [_replayQueue1 enqueue:urlRequest];
   
-  int queueCountAfter = [_replayQueue1.requestQueue count];
+  NSUInteger queueCountAfter = [_replayQueue1.requestQueue count];
   
   XCTAssert(queueCountBefore + 1 == queueCountAfter, @"Enqueuing in dispatch mode should increase the queue size");
 }
