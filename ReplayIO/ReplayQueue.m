@@ -11,15 +11,16 @@
 #import "ReplayConfig.h"
 
 typedef NS_ENUM(NSUInteger, ReplayDispatchMode) {
-  kReplayDispatchModeAuto   = 1,
-  kReplayDispatchModeManual = 2,
-  kReplayDispatchModeTimer  = 3
+  kReplayDispatchModeImmediate = 1,
+  kReplayDispatchModeManual    = 2,
+  kReplayDispatchModeTimer     = 3
 };
 
 
 @interface ReplayQueue ()
 @property (nonatomic) BOOL currentlyProcessingQueue;
 @property (nonatomic) ReplayDispatchMode dispatchMode;
+@property (nonatomic) NSTimer* dispatchTimer;
 @end
 
 
@@ -52,7 +53,7 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
   
   // we have internet access so try to dequeue now
   if ([reachability isReachable] &&
-      (self.dispatchMode == kReplayDispatchModeTimer || self.dispatchMode == kReplayDispatchModeAuto))
+      (self.dispatchMode == kReplayDispatchModeTimer || self.dispatchMode == kReplayDispatchModeImmediate))
   {
     DEBUG_LOG(@">>>>> Reachability: reachable");
     [self dequeue];
@@ -71,7 +72,7 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
   [self.requestQueue addObject:request];
   
   // immediate dispatching
-  if (self.dispatchMode == kReplayDispatchModeAuto) {
+  if (self.dispatchMode == kReplayDispatchModeImmediate) {
     [self dequeue];
   }
 }
@@ -87,15 +88,25 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
   
   // manual dispatching
   if (dispatchInterval < 0) {
+    DEBUG_LOG(@"Dispatch mode = manual");
     self.dispatchMode = kReplayDispatchModeManual;
+    self.dispatchTimer = nil;
   }
   // immediate dispatching
   else if (dispatchInterval == 0) {
-    self.dispatchMode = kReplayDispatchModeAuto;
+    DEBUG_LOG(@"Dispatch mode = immediate");
+    self.dispatchMode = kReplayDispatchModeImmediate;
+    self.dispatchTimer = nil;
   }
   // timer-based dispatching
   else {
+    DEBUG_LOG(@"Dispatch mode = timer (t = %li)", (long)dispatchInterval);
     self.dispatchMode = kReplayDispatchModeTimer;
+    self.dispatchTimer = [NSTimer scheduledTimerWithTimeInterval:dispatchInterval
+                                                          target:self
+                                                        selector:@selector(timerDidFire:)
+                                                        userInfo:nil
+                                                         repeats:YES];
   }
 }
 
@@ -148,6 +159,11 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
   else {
     DEBUG_LOG(@"Can't dequeue -- request in progress OR empty queue");
   }
+}
+
+- (void)timerDidFire:(NSTimer *)timer {
+  DEBUG_LOG(@"Timer fired!");
+  [self dequeue];
 }
 
 @end
