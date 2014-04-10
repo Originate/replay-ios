@@ -17,6 +17,8 @@
 - (void)dispatch;
 - (void)startTimer;
 - (void)stopTimer;
+- (void)saveQueueToDisk;
+- (void)loadQueueFromDisk;
 
 @property (nonatomic) Reachability* reachability;
 @property (nonatomic, strong) NSMutableArray* requestQueue;

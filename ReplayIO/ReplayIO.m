@@ -55,10 +55,12 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 
 + (void)applicationDidEnterBackground:(NSNotification *)notification {
   [ReplaySessionManager endSession];
+  [[ReplayQueue sharedQueue] saveQueueToDisk];
 }
 
 + (void)applicationWillEnterForeground:(NSNotification *)notification {
   [[ReplayAPIManager sharedManager] updateSessionUUID:[ReplaySessionManager sessionUUID]];
+  [[ReplayQueue sharedQueue] loadQueueFromDisk];
 }
 
 

@@ -16,6 +16,8 @@ typedef NS_ENUM(NSUInteger, ReplayDispatchMode) {
   kReplayDispatchModeTimer     = 3
 };
 
+static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedQueue";
+
 
 @interface ReplayQueue ()
 @property (nonatomic) BOOL currentlyProcessingQueue;
@@ -39,7 +41,7 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
     self.reachability = [Reachability reachabilityForInternetConnection];
     [self.reachability startNotifier];
     
-    self.requestQueue             = [NSMutableArray array];
+    [self loadQueueFromDisk];
     self.dispatchInterval         = 0;
     self.currentlyProcessingQueue = NO;
   }
@@ -120,6 +122,27 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
 - (void)stopTimer {
   [self.dispatchTimer invalidate];
   self.dispatchTimer = nil;
+}
+
+- (void)saveQueueToDisk {
+  NSData* queueData = [NSKeyedArchiver archivedDataWithRootObject:self.requestQueue];
+  [[NSUserDefaults standardUserDefaults] setObject:queueData forKey:REPLAY_PLIST_KEY];
+}
+
+- (void)loadQueueFromDisk {
+  DEBUG_LOG(@"LOAD QUEUE FROM DISK");
+  
+  NSData* savedQueueData = [[NSUserDefaults standardUserDefaults] objectForKey:REPLAY_PLIST_KEY];
+  NSArray* savedQueue = [NSKeyedUnarchiver unarchiveObjectWithData:savedQueueData];
+  
+  if (!savedQueue) {
+    DEBUG_LOG(@"QUEUE EMPTY");
+    self.requestQueue = [NSMutableArray array];
+  }
+  else {
+    DEBUG_LOG(@"QUEUE = %@", savedQueue);
+    self.requestQueue = [[NSMutableArray alloc] initWithArray:savedQueue];
+  }
 }
 
 
