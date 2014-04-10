@@ -28,11 +28,11 @@ This class manages the endpoints. For each endpoint, there should be a correspon
 
 ### ReplayQueue
 
-This class queues the URL requests created by ReplayAPIManager. All requests to be sent out are enqueued by ReplayQueue and dequeued according to the dispatch mode.
+This class queues the URL requests created by ReplayAPIManager. All requests to be sent out are enqueued by ReplayQueue and dequeued according to the `dispatchInterval`.
 
-| Automatic Mode       | Dispatch Mode                                                             |
-|----------------------|---------------------------------------------------------------------------|
-| Dequeued immediately | Dequeued manually via `dispatch` or automatically with `dispatchInterval` |
+| t < 0           | t = 0              | t > 0          |
+|-----------------|--------------------|----------------|
+| Manual dispatch | Immediate dispatch | Timer dispatch |
 
 The dequeue method will attempt to send off all requests in the queue synchronously. When connectivity problems prevent a request from succeeding, the dequeueing will stop.
 

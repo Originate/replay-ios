@@ -83,18 +83,22 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 }
 
 + (void)enable {
-  [[ReplayIO sharedTracker] isEnabled:YES];
+  [ReplayIO sharedTracker].enabled = YES;
+  [[ReplayQueue sharedQueue] startTimer];
 }
 
 + (void)disable {
-  [[ReplayIO sharedTracker] isEnabled:NO];
+  [ReplayIO sharedTracker].enabled = NO;
+  [[ReplayQueue sharedQueue] stopTimer];
 }
 
 + (void)setDispatchInterval:(NSInteger)interval {
+  CONTINUE_IF_REPLAY_IS_ENABLED;
   [[ReplayQueue sharedQueue] setDispatchInterval:interval];
 }
 
 + (void)dispatch {
+  CONTINUE_IF_REPLAY_IS_ENABLED;
   [[ReplayQueue sharedQueue] dispatch];
 }
 

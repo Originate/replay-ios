@@ -79,35 +79,47 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
 
 - (void)dispatch {
   DEBUG_LOG(@"Manual dispatch");
-  
   [self dequeue];
 }
 
 - (void)setDispatchInterval:(NSInteger)dispatchInterval {
-  _dispatchInterval = dispatchInterval;
+   _dispatchInterval = dispatchInterval;
   
   // manual dispatching
   if (dispatchInterval < 0) {
     DEBUG_LOG(@"Dispatch mode = manual");
     self.dispatchMode = kReplayDispatchModeManual;
-    self.dispatchTimer = nil;
+    [self stopTimer];
   }
   // immediate dispatching
   else if (dispatchInterval == 0) {
     DEBUG_LOG(@"Dispatch mode = immediate");
     self.dispatchMode = kReplayDispatchModeImmediate;
-    self.dispatchTimer = nil;
+    [self stopTimer];
   }
   // timer-based dispatching
   else {
     DEBUG_LOG(@"Dispatch mode = timer (t = %li)", (long)dispatchInterval);
     self.dispatchMode = kReplayDispatchModeTimer;
-    self.dispatchTimer = [NSTimer scheduledTimerWithTimeInterval:dispatchInterval
+    [self startTimer];
+  }
+}
+
+- (void)startTimer {
+  [self stopTimer];
+  
+  if (self.dispatchMode == kReplayDispatchModeTimer) {
+    self.dispatchTimer = [NSTimer scheduledTimerWithTimeInterval:self.dispatchInterval
                                                           target:self
                                                         selector:@selector(timerDidFire:)
                                                         userInfo:nil
                                                          repeats:YES];
   }
+}
+
+- (void)stopTimer {
+  [self.dispatchTimer invalidate];
+  self.dispatchTimer = nil;
 }
 
 
@@ -150,6 +162,10 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
 
 // attempt to send off all requests in the queue
 - (void)dequeue {
+  if (self.dispatchMode == kReplayDispatchModeTimer) {
+    [self startTimer];
+  }
+  
   if (!self.currentlyProcessingQueue && [self.requestQueue count] > 0) {
     self.currentlyProcessingQueue = YES;
     
@@ -157,7 +173,10 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
     [self sendAsynchronousRequest:firstRequest];
   }
   else {
-    DEBUG_LOG(@"Can't dequeue -- request in progress OR empty queue");
+    if (self.currentlyProcessingQueue)
+      DEBUG_LOG(@"  Can't dequeue - request in progress");
+    if ([self.requestQueue count] == 0)
+      DEBUG_LOG(@"  Empty queue");
   }
 }
 
@@ -165,5 +184,6 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
   DEBUG_LOG(@"Timer fired!");
   [self dequeue];
 }
+
 
 @end

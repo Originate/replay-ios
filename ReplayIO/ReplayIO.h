@@ -18,13 +18,15 @@
 // Instantiation
 + (void)trackWithAPIKey:(NSString *)apiKey;
 
-// Public methods
+// Endpoint methods
 + (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties;
 + (void)updateAlias:(NSString *)userAlias;
 
+// Dispatch
 + (void)setDispatchInterval:(NSInteger)interval;
 + (void)dispatch;
 
+// Enable/disable
 + (void)enable;
 + (void)disable;
 

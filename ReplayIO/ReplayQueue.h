@@ -15,6 +15,8 @@
 + (ReplayQueue *)sharedQueue;
 - (void)enqueue:(NSURLRequest *)request;
 - (void)dispatch;
+- (void)startTimer;
+- (void)stopTimer;
 
 @property (nonatomic) Reachability* reachability;
 @property (nonatomic, strong) NSMutableArray* requestQueue;
