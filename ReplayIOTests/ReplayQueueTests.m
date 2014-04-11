@@ -10,8 +10,7 @@
 #import "ReplayQueue.h"
 
 @interface ReplayQueueTests : XCTestCase {
-  ReplayQueue* _replayQueue1;
-  ReplayQueue* _replayQueue2;
+  ReplayQueue* _replayQueue;
 }
 @end
 
@@ -20,27 +19,22 @@
 - (void)setUp {
   [super setUp];
   
-  _replayQueue1 = [ReplayQueue sharedQueue];
-  _replayQueue2 = [ReplayQueue sharedQueue];
+  _replayQueue = [[ReplayQueue alloc] init];
 }
 
 - (void)tearDown {
   [super tearDown];
 }
 
-- (void)testIsSingleton {
-  XCTAssertEqualObjects(_replayQueue1, _replayQueue2, @"ReplayQueue should be a singleton");
-}
-
 - (void)testEnqueueWithManualDispatch {
-  NSUInteger queueCountBefore = [_replayQueue1.requestQueue count];
+  NSUInteger queueCountBefore = [_replayQueue.requestQueue count];
   
-  [_replayQueue1 setDispatchInterval:-1];
+  [_replayQueue setDispatchInterval:-1];
   
   NSURLRequest* urlRequest = [[NSURLRequest alloc] init];
-  [_replayQueue1 enqueue:urlRequest];
+  [_replayQueue enqueue:urlRequest];
   
-  NSUInteger queueCountAfter = [_replayQueue1.requestQueue count];
+  NSUInteger queueCountAfter = [_replayQueue.requestQueue count];
   
   XCTAssert(queueCountBefore + 1 == queueCountAfter, @"Enqueuing in dispatch mode should increase the queue size");
 }

@@ -20,6 +20,7 @@
 
 @interface ReplayIO ()
 @property (nonatomic, setter = isEnabled:) BOOL enabled;
+@property (nonatomic, strong) ReplayQueue* replayQueue;
 @end
 
 @implementation ReplayIO
@@ -55,12 +56,12 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 
 + (void)applicationDidEnterBackground:(NSNotification *)notification {
   [ReplaySessionManager endSession];
-  [[ReplayQueue sharedQueue] saveQueueToDisk];
+  [[ReplayIO sharedTracker].replayQueue saveQueueToDisk];
 }
 
 + (void)applicationWillEnterForeground:(NSNotification *)notification {
   [[ReplayAPIManager sharedManager] updateSessionUUID:[ReplaySessionManager sessionUUID]];
-  [[ReplayQueue sharedQueue] loadQueueFromDisk];
+  [[ReplayIO sharedTracker].replayQueue loadQueueFromDisk];
 }
 
 
@@ -86,22 +87,22 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 
 + (void)enable {
   [ReplayIO sharedTracker].enabled = YES;
-  [[ReplayQueue sharedQueue] startTimer];
+  [[ReplayIO sharedTracker].replayQueue startTimer];
 }
 
 + (void)disable {
   [ReplayIO sharedTracker].enabled = NO;
-  [[ReplayQueue sharedQueue] stopTimer];
+  [[ReplayIO sharedTracker].replayQueue stopTimer];
 }
 
 + (void)setDispatchInterval:(NSInteger)interval {
   CONTINUE_IF_REPLAY_IS_ENABLED;
-  [[ReplayQueue sharedQueue] setDispatchInterval:interval];
+  [[ReplayIO sharedTracker].replayQueue setDispatchInterval:interval];
 }
 
 + (void)dispatch {
   CONTINUE_IF_REPLAY_IS_ENABLED;
-  [[ReplayQueue sharedQueue] dispatch];
+  [[ReplayIO sharedTracker].replayQueue dispatch];
 }
 
 
@@ -117,13 +118,13 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 - (void)updateAlias:(NSString *)userAlias {
   NSURLRequest* request = [[ReplayAPIManager sharedManager] requestForAlias:userAlias];
   
-  [[ReplayQueue sharedQueue] enqueue:request];
+  [[ReplayIO sharedTracker].replayQueue enqueue:request];
 }
 
 - (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties {
   NSURLRequest* request = [[ReplayAPIManager sharedManager] requestForEvent:eventName withData:eventProperties];
 
-  [[ReplayQueue sharedQueue] enqueue:request];
+  [[ReplayIO sharedTracker].replayQueue enqueue:request];
 }
 
 

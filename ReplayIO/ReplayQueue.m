@@ -28,8 +28,6 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 
 @implementation ReplayQueue
 
-SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
-
 - (instancetype)init {
   self = [super init];
   if (self) {

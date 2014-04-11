@@ -12,7 +12,6 @@
 
 @interface ReplayQueue : NSObject
 
-+ (ReplayQueue *)sharedQueue;
 - (void)enqueue:(NSURLRequest *)request;
 - (void)dispatch;
 - (void)startTimer;
