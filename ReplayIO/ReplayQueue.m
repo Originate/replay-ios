@@ -16,7 +16,7 @@ typedef NS_ENUM(NSUInteger, ReplayDispatchMode) {
   kReplayDispatchModeTimer     = 3
 };
 
-static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedQueue";
+static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 
 
 @interface ReplayQueue ()
@@ -42,7 +42,7 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
     [self.reachability startNotifier];
     
     [self loadQueueFromDisk];
-    self.dispatchInterval         = 0;
+    self.dispatchInterval = 0;
     self.currentlyProcessingQueue = NO;
   }
   return self;
@@ -125,24 +125,22 @@ SYNTHESIZE_SINGLETON(ReplayQueue, sharedQueue);
 }
 
 - (void)saveQueueToDisk {
-  NSData* queueData = [NSKeyedArchiver archivedDataWithRootObject:self.requestQueue];
-  [[NSUserDefaults standardUserDefaults] setObject:queueData forKey:REPLAY_PLIST_KEY];
+  if ([self.requestQueue count] > 0) {
+    NSData* queueData = [NSKeyedArchiver archivedDataWithRootObject:self.requestQueue];
+    [[NSUserDefaults standardUserDefaults] setObject:queueData forKey:REPLAY_PLIST_KEY];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    self.requestQueue = [NSMutableArray array];
+  }
 }
 
 - (void)loadQueueFromDisk {
-  DEBUG_LOG(@"LOAD QUEUE FROM DISK");
-  
   NSData* savedQueueData = [[NSUserDefaults standardUserDefaults] objectForKey:REPLAY_PLIST_KEY];
   NSArray* savedQueue = [NSKeyedUnarchiver unarchiveObjectWithData:savedQueueData];
   
-  if (!savedQueue) {
-    DEBUG_LOG(@"QUEUE EMPTY");
-    self.requestQueue = [NSMutableArray array];
-  }
-  else {
-    DEBUG_LOG(@"QUEUE = %@", savedQueue);
-    self.requestQueue = [[NSMutableArray alloc] initWithArray:savedQueue];
-  }
+  self.requestQueue = !savedQueue ? [NSMutableArray array] : [[NSMutableArray alloc] initWithArray:savedQueue];
+
+  [[NSUserDefaults standardUserDefaults] removeObjectForKey:REPLAY_PLIST_KEY];
 }
 
 
