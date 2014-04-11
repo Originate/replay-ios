@@ -14,8 +14,7 @@
 #define kSessionUUID @"sessionUUID"
 
 @interface ReplayAPIManagerTests : XCTestCase {
-  ReplayAPIManager* _replayAPIManagerInstance1;
-  ReplayAPIManager* _replayAPIManagerInstance2;
+  ReplayAPIManager* _replayAPIManager;
 }
 @end
 
@@ -25,32 +24,27 @@
 - (void)setUp {
   [super setUp];
   
-  _replayAPIManagerInstance1 = [ReplayAPIManager sharedManager];
-  _replayAPIManagerInstance2 = [ReplayAPIManager sharedManager];
+  _replayAPIManager = [[ReplayAPIManager alloc] init];
 }
 
 - (void)tearDown {
   [super tearDown];
 }
 
-- (void)testIsSingleton {
-  XCTAssertEqualObjects(_replayAPIManagerInstance1, _replayAPIManagerInstance2, @"ReplayAPIManager should be a singleton");
-}
-
 - (void)testAggregateSetter {
-  [_replayAPIManagerInstance1 setAPIKey:kTestApiKey
-                             clientUUID:kClientUUID
-                            sessionUUID:kSessionUUID];
+  [_replayAPIManager setAPIKey:kTestApiKey
+                    clientUUID:kClientUUID
+                   sessionUUID:kSessionUUID];
   
-  XCTAssertEqualObjects(_replayAPIManagerInstance1.apiKey, kTestApiKey, @"ReplayAPIManager apiKey property should be set via setAPIKey:clientUUID:sessionUUID:");
-  XCTAssertEqualObjects(_replayAPIManagerInstance1.clientUUID, kClientUUID, @"ReplayAPIManager clientUUID property should be set via setAPIKey:clientUUID:sessionUUID:");
-  XCTAssertEqualObjects(_replayAPIManagerInstance1.sessionUUID, kSessionUUID, @"ReplayAPIManager sessionUUID property should be set via setAPIKey:clientUUID:sessionUUID:");
+  XCTAssertEqualObjects(_replayAPIManager.apiKey, kTestApiKey, @"ReplayAPIManager apiKey property should be set via setAPIKey:clientUUID:sessionUUID:");
+  XCTAssertEqualObjects(_replayAPIManager.clientUUID, kClientUUID, @"ReplayAPIManager clientUUID property should be set via setAPIKey:clientUUID:sessionUUID:");
+  XCTAssertEqualObjects(_replayAPIManager.sessionUUID, kSessionUUID, @"ReplayAPIManager sessionUUID property should be set via setAPIKey:clientUUID:sessionUUID:");
 }
 
 - (void)testRequestForEvent {
-  [_replayAPIManagerInstance1 setAPIKey:kTestApiKey
-                             clientUUID:kClientUUID
-                            sessionUUID:kSessionUUID];
+  [_replayAPIManager setAPIKey:kTestApiKey
+                    clientUUID:kClientUUID
+                  sessionUUID:kSessionUUID];
   
   NSDictionary* correctJson = @{@"replayKey": kTestApiKey,
                                 @"clientId" : kClientUUID,
@@ -60,10 +54,10 @@
                                                 @"2"    : @"two",
                                                 @"3"    : @"three"}};
   
-  NSURLRequest* request = [_replayAPIManagerInstance1 requestForEvent:@"myEventName"
-                                                             withData:@{@"1": @"one",
-                                                                        @"2": @"two",
-                                                                        @"3": @"three"}];
+  NSURLRequest* request = [_replayAPIManager requestForEvent:@"myEventName"
+                                                    withData:@{@"1": @"one",
+                                                               @"2": @"two",
+                                                               @"3": @"three"}];
   
   XCTAssertTrue([request.HTTPMethod isEqualToString:@"POST"],
                 @"Request for event should have HTTP Method: POST");
@@ -76,15 +70,15 @@
 }
 
 - (void)testRequestForAlias {
-  [_replayAPIManagerInstance1 setAPIKey:kTestApiKey
-                             clientUUID:kClientUUID
-                            sessionUUID:kSessionUUID];
+  [_replayAPIManager setAPIKey:kTestApiKey
+                    clientUUID:kClientUUID
+                   sessionUUID:kSessionUUID];
   
   NSDictionary* correctJson = @{@"replayKey": kTestApiKey,
                                 @"clientId" : kClientUUID,
                                 @"alias"    : @"testAlias"};
   
-  NSURLRequest* request = [_replayAPIManagerInstance1 requestForAlias:@"testAlias"];
+  NSURLRequest* request = [_replayAPIManager requestForAlias:@"testAlias"];
   
   XCTAssertTrue([request.HTTPMethod isEqualToString:@"POST"],
                 @"Request for alias should have HTTP Method: POST");

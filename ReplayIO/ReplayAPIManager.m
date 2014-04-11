@@ -18,9 +18,6 @@
 
 @implementation ReplayAPIManager
 
-SYNTHESIZE_SINGLETON(ReplayAPIManager, sharedManager);
-
-
 - (void)setAPIKey:(NSString *)apiKey
        clientUUID:(NSString *)clientUUID
       sessionUUID:(NSString *)sessionUUID

@@ -14,8 +14,6 @@
 @property (nonatomic, strong, readonly) NSString* clientUUID;
 @property (nonatomic, strong, readonly) NSString* sessionUUID;
 
-+ (ReplayAPIManager *)sharedManager;
-
 - (void)setAPIKey:(NSString *)apiKey clientUUID:(NSString *)clientUUID sessionUUID:(NSString *)sessionUUID;
 - (void)updateSessionUUID:(NSString *)sessionUUID;
 

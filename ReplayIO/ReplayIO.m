@@ -20,17 +20,30 @@
 
 @interface ReplayIO ()
 @property (nonatomic, setter = isEnabled:) BOOL enabled;
+
+@property (nonatomic, strong) ReplayAPIManager* replayAPIManager;
 @property (nonatomic, strong) ReplayQueue* replayQueue;
 @end
 
 @implementation ReplayIO
 
-SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
++ (ReplayIO *)sharedTracker {
+  static ReplayIO* sharedTracker = nil;
+  static dispatch_once_t onceToken;          
+
+  dispatch_once(&onceToken, ^{               
+    sharedTracker = [[ReplayIO alloc] init];
+  });                                        
+  return sharedTracker;
+}
+
 
 - (instancetype)init {
   self = [super init];
   if (self) {
     self.enabled = YES;
+    self.replayAPIManager = [[ReplayAPIManager alloc] init];
+    self.replayQueue = [[ReplayQueue alloc] init];
   }
   return self;
 }
@@ -60,7 +73,7 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 }
 
 + (void)applicationWillEnterForeground:(NSNotification *)notification {
-  [[ReplayAPIManager sharedManager] updateSessionUUID:[ReplaySessionManager sessionUUID]];
+  [[ReplayIO sharedTracker].replayAPIManager updateSessionUUID:[ReplaySessionManager sessionUUID]];
   [[ReplayIO sharedTracker].replayQueue loadQueueFromDisk];
 }
 
@@ -110,21 +123,21 @@ SYNTHESIZE_SINGLETON(ReplayIO, sharedTracker);
 
 - (void)trackWithAPIKey:(NSString *)apiKey {
   
-  [[ReplayAPIManager sharedManager] setAPIKey:apiKey
-                                   clientUUID:[[[UIDevice currentDevice] identifierForVendor] UUIDString]
-                                  sessionUUID:[ReplaySessionManager sessionUUID]];
+  [self.replayAPIManager setAPIKey:apiKey
+                         clientUUID:[[[UIDevice currentDevice] identifierForVendor] UUIDString]
+                         sessionUUID:[ReplaySessionManager sessionUUID]];
 }
 
 - (void)updateAlias:(NSString *)userAlias {
-  NSURLRequest* request = [[ReplayAPIManager sharedManager] requestForAlias:userAlias];
+  NSURLRequest* request = [self.replayAPIManager requestForAlias:userAlias];
   
-  [[ReplayIO sharedTracker].replayQueue enqueue:request];
+  [self.replayQueue enqueue:request];
 }
 
 - (void)trackEvent:(NSString *)eventName withProperties:(NSDictionary *)eventProperties {
-  NSURLRequest* request = [[ReplayAPIManager sharedManager] requestForEvent:eventName withData:eventProperties];
+  NSURLRequest* request = [self.replayAPIManager requestForEvent:eventName withData:eventProperties];
 
-  [[ReplayIO sharedTracker].replayQueue enqueue:request];
+  [self.replayQueue enqueue:request];
 }
 
 
