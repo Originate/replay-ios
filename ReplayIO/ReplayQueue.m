@@ -40,7 +40,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
     [self.reachability startNotifier];
     
     [self loadQueueFromDisk];
-    self.dispatchInterval = 0;
+    self->_dispatchInterval = 0; // bypass setter to avoid DEBUG_LOG circular reference (explanation in git commit)
     self.currentlyProcessingQueue = NO;
   }
   return self;
