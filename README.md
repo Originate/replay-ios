@@ -38,12 +38,12 @@ The dequeue method will attempt to send off all requests in the queue synchronou
 
 A [popular third-party fork](https://github.com/tonymillion/Reachability) of Apple's Reachability class is used to detect changes to internet availability. When Reachability notifies the ReplayQueue that "there is internet," ReplayQueue will reattempt to dequeue all pending requests.
 
+When the parent app is sent to the background, ReplayIO will persist all pending requests to disk, and requests will be requeued when the app is restored.
 
 Possible TODOs:
 
-* Batch dispatching (send several requests in a single HTTP request, requires server support)
+* Batch dispatching (send multiple requests in a single HTTP request, requires server support)
 * Request rate limiting
-* Save requests to disk when internet is unavailable and app closes
 
 ### Tests
 
@@ -68,7 +68,7 @@ The framework lives as a singleton in your app. For convenience, all instance me
 ### Tracking Events
 
 ```obj-c
-[ReplayIO trackEvent:@"Event name" withProperties:@{@"key": @"value"}];
+[ReplayIO trackEvent:@"Event name" withData:@{@"key": @"value"}];
 ```
 
 ### Set Alias
@@ -88,4 +88,22 @@ The framework lives as a singleton in your app. For convenience, all instance me
 ```obj-c
 [ReplayIO enable];
 [ReplayIO disable];
+```
+
+### Dispatching
+
+By default, ReplayIO will dispatch event data as soon as the `trackEvent:withData:` method is called. You can choose to dispatch data periodically as well by modifying the dispatch interval. Specifying a negative interval will disable periodic dispatch.
+
+```obj-c
+[ReplayIO setDispatchInterval:120];  // dispatch every 2 minutes
+```
+
+```obj-c
+[ReplayIO setDispatchInterval:-1];   // disable periodic dispatch
+...
+[ReplayIO dispatch]                  // dispatch manually
+```
+
+```obj-c
+[ReplayIO setDispatchInterval:0];    // dispatch immediately (default)
 ```
