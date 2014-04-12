@@ -19,8 +19,7 @@
 
 
 @interface ReplayIO ()
-@property (nonatomic, setter = isEnabled:) BOOL enabled;
-
+@property (nonatomic) BOOL enabled;
 @property (nonatomic, strong) ReplayAPIManager* replayAPIManager;
 @property (nonatomic, strong) ReplayQueue* replayQueue;
 @end
@@ -99,17 +98,18 @@
 }
 
 + (void)enable {
+  DEBUG_LOG(@"Tracking = ON");
   [ReplayIO sharedTracker].enabled = YES;
-  [[ReplayIO sharedTracker].replayQueue startTimer];
+  [[ReplayIO sharedTracker].replayQueue startTimerIfNeeded];
 }
 
 + (void)disable {
+  DEBUG_LOG(@"Tracking = OFF");
   [ReplayIO sharedTracker].enabled = NO;
   [[ReplayIO sharedTracker].replayQueue stopTimer];
 }
 
 + (void)setDispatchInterval:(NSInteger)interval {
-  CONTINUE_IF_REPLAY_IS_ENABLED;
   [[ReplayIO sharedTracker].replayQueue setDispatchInterval:interval];
 }
 

@@ -10,19 +10,11 @@
 #import "Reachability/Reachability.h"
 #import "ReplayConfig.h"
 
-typedef NS_ENUM(NSUInteger, ReplayDispatchMode) {
-  kReplayDispatchModeImmediate = 1,
-  kReplayDispatchModeManual    = 2,
-  kReplayDispatchModeTimer     = 3
-};
 
 static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 
-
 @interface ReplayQueue ()
 @property (nonatomic) BOOL currentlyProcessingQueue;
-@property (nonatomic) ReplayDispatchMode dispatchMode;
-@property (nonatomic) NSTimer* dispatchTimer;
 @end
 
 
@@ -36,11 +28,15 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
                                                  name:kReachabilityChangedNotification
                                                object:nil];
     
+    // listen for reachability changes
     self.reachability = [Reachability reachabilityForInternetConnection];
     [self.reachability startNotifier];
     
+    // retrieve saved queue
     [self loadQueueFromDisk];
-    self->_dispatchInterval = 0; // bypass setter to avoid DEBUG_LOG circular reference (explanation in git commit)
+    
+    // send all requests immediately by default
+    self.dispatchInterval = 0;
     self.currentlyProcessingQueue = NO;
   }
   return self;
@@ -52,9 +48,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
   Reachability* reachability = [notification object];
   
   // we have internet access so try to dequeue now
-  if ([reachability isReachable] &&
-      (self.dispatchMode == kReplayDispatchModeTimer || self.dispatchMode == kReplayDispatchModeImmediate))
-  {
+  if ([reachability isReachable] && self.dispatchInterval >= 0) {
     DEBUG_LOG(@">>>>> Reachability: reachable");
     [self dequeue];
   }
@@ -64,56 +58,38 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 }
 
 
-#pragma mark - Public methods
+#pragma mark - Public methods (queueing)
 
 - (void)enqueue:(NSURLRequest *)request {
-  DEBUG_LOG(@"Enqueuing request (t = %li)", (long)self.dispatchInterval);
+  DEBUG_LOG(@"Enqueued request (%i requests in queue)", (int)[self.requestQueue count] + 1);
   
   [self.requestQueue addObject:request];
-  
-  // immediate dispatching
-  if (self.dispatchMode == kReplayDispatchModeImmediate) {
-    [self dequeue];
-  }
+  [self startTimerIfNeeded];
 }
 
 - (void)dispatch {
   DEBUG_LOG(@"Manual dispatch");
+  
   [self dequeue];
 }
 
-- (void)setDispatchInterval:(NSInteger)dispatchInterval {
-   _dispatchInterval = dispatchInterval;
-  
-  // manual dispatching
-  if (dispatchInterval < 0) {
-    DEBUG_LOG(@"Dispatch mode = manual");
-    self.dispatchMode = kReplayDispatchModeManual;
-    [self stopTimer];
-  }
-  // immediate dispatching
-  else if (dispatchInterval == 0) {
-    DEBUG_LOG(@"Dispatch mode = immediate");
-    self.dispatchMode = kReplayDispatchModeImmediate;
-    [self stopTimer];
-  }
-  // timer-based dispatching
-  else {
-    DEBUG_LOG(@"Dispatch mode = timer (t = %li)", (long)dispatchInterval);
-    self.dispatchMode = kReplayDispatchModeTimer;
-    [self startTimer];
-  }
-}
 
-- (void)startTimer {
-  [self stopTimer];
-  
-  if (self.dispatchMode == kReplayDispatchModeTimer) {
+#pragma mark - Public methods (timers)
+
+- (void)startTimerIfNeeded {
+  if (self.dispatchInterval > 0 &&
+      [self.requestQueue count] > 0 &&
+      (!self.dispatchTimer || self.dispatchInterval != (int)self.dispatchTimer.timeInterval))
+  {
     self.dispatchTimer = [NSTimer scheduledTimerWithTimeInterval:self.dispatchInterval
                                                           target:self
-                                                        selector:@selector(timerDidFire:)
+                                                        selector:@selector(dequeue)
                                                         userInfo:nil
                                                          repeats:YES];
+  }
+  else if (self.dispatchInterval == 0) {
+    [self stopTimer];
+    [self dequeue];
   }
 }
 
@@ -122,22 +98,35 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
   self.dispatchTimer = nil;
 }
 
+- (void)stopTimerIfUnneeded {
+  if (self.dispatchInterval <= 0 || [self.requestQueue count] == 0) {
+    [self stopTimer];
+  }
+}
+
+
+#pragma mark - Public methods (persistence)
+
 - (void)saveQueueToDisk {
   if ([self.requestQueue count] > 0) {
+    // save to request queue to disk
     NSData* queueData = [NSKeyedArchiver archivedDataWithRootObject:self.requestQueue];
     [[NSUserDefaults standardUserDefaults] setObject:queueData forKey:REPLAY_PLIST_KEY];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
+    // clear queue from memory
     self.requestQueue = [NSMutableArray array];
   }
 }
 
 - (void)loadQueueFromDisk {
   NSData* savedQueueData = [[NSUserDefaults standardUserDefaults] objectForKey:REPLAY_PLIST_KEY];
-  NSArray* savedQueue = [NSKeyedUnarchiver unarchiveObjectWithData:savedQueueData];
+  NSArray* savedQueue = savedQueueData ? [NSKeyedUnarchiver unarchiveObjectWithData:savedQueueData] : nil;
   
+  // copy queue from disk to memory
   self.requestQueue = !savedQueue ? [NSMutableArray array] : [[NSMutableArray alloc] initWithArray:savedQueue];
 
+  // clear queue from disk
   [[NSUserDefaults standardUserDefaults] removeObjectForKey:REPLAY_PLIST_KEY];
 }
 
@@ -147,21 +136,19 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 // send off a single request
 // if it's successful, send off the next request in the queue
 - (void)sendAsynchronousRequest:(NSURLRequest *)request {
-  DEBUG_LOG(@"Sending request...");
+  DEBUG_LOG(@"  ├── Sending request...");
   
-  NSMutableURLRequest* requestWithShorterTimeout = [request mutableCopy];
-  [requestWithShorterTimeout setTimeoutInterval:15]; // default of 60 sec is too long
-  
-  [NSURLConnection sendAsynchronousRequest:requestWithShorterTimeout
+  [NSURLConnection sendAsynchronousRequest:[self urlRequest:request withTimeout:15]
                                      queue:[NSOperationQueue mainQueue]
                          completionHandler:^(NSURLResponse* response, NSData* data, NSError* connectionError) {
                            // success - remove request from queue and process next item
                            if (!connectionError) {
                              [self.requestQueue removeObjectAtIndex:0];
+                             [self stopTimerIfUnneeded];
                              
-                             DEBUG_LOG(@"  Sent successfully");
-                             DEBUG_LOG(@"  Requests remaining in queue: %lu", (unsigned long)[self.requestQueue count]);
+                             DEBUG_LOG(@"  │    └── Sent successfully (%i left)", (int)[self.requestQueue count]);
                              
+                             // dequeue next request
                              if ([self.requestQueue count] > 0) {
                                NSURLRequest* nextRequest = [self.requestQueue objectAtIndex:0];
                                [self sendAsynchronousRequest:nextRequest];
@@ -171,8 +158,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
                            
                            // failure - wait for Reachability notification to call dequeue
                            else {
-                             DEBUG_LOG(@"  Sent failure");
-                             DEBUG_LOG(@"  Requests remaining in queue: %lu", (unsigned long)[self.requestQueue count]);
+                             DEBUG_LOG(@"  │    └── Sent failure (%i left)", (int)[self.requestQueue count]);
                            }
                            
                            self.currentlyProcessingQueue = NO;
@@ -181,9 +167,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 
 // attempt to send off all requests in the queue
 - (void)dequeue {
-  if (self.dispatchMode == kReplayDispatchModeTimer) {
-    [self startTimer];
-  }
+  DEBUG_LOG(@"Dequeueing requests...");
   
   if (!self.currentlyProcessingQueue && [self.requestQueue count] > 0) {
     self.currentlyProcessingQueue = YES;
@@ -192,16 +176,22 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
     [self sendAsynchronousRequest:firstRequest];
   }
   else {
-    if (self.currentlyProcessingQueue)
-      DEBUG_LOG(@"  Can't dequeue - request in progress");
-    if ([self.requestQueue count] == 0)
-      DEBUG_LOG(@"  Empty queue");
+    [self stopTimerIfUnneeded];
+    
+    if (self.currentlyProcessingQueue) {
+      DEBUG_LOG(@"  ├── Can't dequeue - request in progress");
+    }
+    if ([self.requestQueue count] == 0) {
+      DEBUG_LOG(@"  ├── Empty queue");
+    }
   }
 }
 
-- (void)timerDidFire:(NSTimer *)timer {
-  DEBUG_LOG(@"Timer fired!");
-  [self dequeue];
+- (NSURLRequest *)urlRequest:(NSURLRequest *)request withTimeout:(NSTimeInterval)timeout {
+  NSMutableURLRequest* mutableRequest = [request mutableCopy];
+  [mutableRequest setTimeoutInterval:timeout];
+  
+  return [mutableRequest copy];
 }
 
 

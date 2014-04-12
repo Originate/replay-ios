@@ -26,7 +26,7 @@
   self.clientUUID  = clientUUID;
   self.sessionUUID = sessionUUID;
   
-  DEBUG_LOG(@"Tracking with\n  { API Key:      %@,\n    Client UUID:  %@,\n    Session UUID: %@ }", apiKey, clientUUID, sessionUUID);
+  DEBUG_LOG(@"Tracking with\n  { API Key:      %@,\n    Client UUID:  %@,\n    Session UUID: %@ }\n\n", apiKey, clientUUID, sessionUUID);
 }
 
 - (void)updateSessionUUID:(NSString *)sessionUUID {
