@@ -28,6 +28,8 @@
 }
 
 - (void)tearDown {
+  _replayAPIManager = nil;
+  
   [super tearDown];
 }
 
