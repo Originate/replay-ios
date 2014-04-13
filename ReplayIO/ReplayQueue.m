@@ -81,11 +81,13 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
       [self.requestQueue count] > 0 &&
       (!self.dispatchTimer || self.dispatchInterval != (int)self.dispatchTimer.timeInterval))
   {
-    self.dispatchTimer = [NSTimer scheduledTimerWithTimeInterval:self.dispatchInterval
-                                                          target:self
-                                                        selector:@selector(dequeue)
-                                                        userInfo:nil
-                                                         repeats:YES];
+    self.dispatchTimer = [NSTimer timerWithTimeInterval:self.dispatchInterval
+                                                 target:self
+                                               selector:@selector(dequeue)
+                                               userInfo:nil
+                                                repeats:YES];
+    
+    [[NSRunLoop currentRunLoop] addTimer:self.dispatchTimer forMode:NSRunLoopCommonModes];
   }
   else if (self.dispatchInterval == 0) {
     [self stopTimer];
