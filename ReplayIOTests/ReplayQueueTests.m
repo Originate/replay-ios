@@ -161,6 +161,28 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
   XCTAssert([queueArray count] == 0, @"Loading queue to memory should also clear the queue from disk");
 }
 
+- (void)testLoadQueueFromDiskFailsGracefullyWithInvalidData {
+
+  NSURLRequest* request = (NSURLRequest*)[NSURL URLWithString:@"invalid-url-request.com"];
+  NSMutableArray* testQueue = [NSMutableArray arrayWithObject:request];
+
+  NSData* testData = [NSKeyedArchiver archivedDataWithRootObject:testQueue];
+  [[NSUserDefaults standardUserDefaults] setObject:testData forKey:REPLAY_PLIST_KEY];
+  [[NSUserDefaults standardUserDefaults] synchronize];
+  
+  [_replayQueue loadQueueFromDisk];
+  
+  XCTAssert([_replayQueue.requestQueue count] == 0, @"The request queue should not load invalid data from NSUserDefaults");
+}
+
+- (void)testSendAsynchronousRequestFailsGracefullyWithInvalidRequest {
+  NSURLRequest* fakeRequest = (NSURLRequest*)[NSURL URLWithString:@"invalid-url-request.com"];;
+  _replayQueue.dispatchInterval = -1;
+  _replayQueue.requestQueue = [NSMutableArray arrayWithObject:fakeRequest];
+  
+  XCTAssertNoThrow([_replayQueue dispatch], @"Dispatch should fail gracefully if requestQueue contains elements of incorrect datatype");
+}
+
 // TODO: figure out how to test the networking/async stuff
 
 
@@ -180,7 +202,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
     [testQueue addObject:request];
   }
   
-  NSData* testData  = [NSKeyedArchiver archivedDataWithRootObject:testQueue];
+  NSData* testData = [NSKeyedArchiver archivedDataWithRootObject:testQueue];
   [[NSUserDefaults standardUserDefaults] setObject:testData forKey:REPLAY_PLIST_KEY];
   [[NSUserDefaults standardUserDefaults] synchronize];
 }

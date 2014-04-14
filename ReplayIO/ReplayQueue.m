@@ -123,10 +123,9 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 
 - (void)loadQueueFromDisk {
   NSData* savedQueueData = [[NSUserDefaults standardUserDefaults] objectForKey:REPLAY_PLIST_KEY];
-  NSArray* savedQueue = savedQueueData ? [NSKeyedUnarchiver unarchiveObjectWithData:savedQueueData] : nil;
   
   // copy queue from disk to memory
-  self.requestQueue = !savedQueue ? [NSMutableArray array] : [[NSMutableArray alloc] initWithArray:savedQueue];
+  self.requestQueue = [self validatedQueueWithData:savedQueueData];
 
   // clear queue from disk
   [[NSUserDefaults standardUserDefaults] removeObjectForKey:REPLAY_PLIST_KEY];
@@ -140,6 +139,12 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 - (void)sendAsynchronousRequest:(NSURLRequest *)request {
   DEBUG_LOG(@"  ├── Sending request...");
   
+  if (![request isKindOfClass:[NSURLRequest class]]) {
+    [self.requestQueue removeObjectAtIndex:0];
+    [self sendNextRequest];
+    return;
+  }
+  
   [NSURLConnection sendAsynchronousRequest:[self urlRequest:request withTimeout:15]
                                      queue:[NSOperationQueue mainQueue]
                          completionHandler:^(NSURLResponse* response, NSData* data, NSError* connectionError) {
@@ -152,8 +157,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
                              
                              // dequeue next request
                              if ([self.requestQueue count] > 0) {
-                               NSURLRequest* nextRequest = [self.requestQueue objectAtIndex:0];
-                               [self sendAsynchronousRequest:nextRequest];
+                               [self sendNextRequest];
                                return;
                              }
                            }
@@ -181,7 +185,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
     [self stopTimerIfUnneeded];
     
     if (self.currentlyProcessingQueue) {
-      DEBUG_LOG(@"  ├── Can't dequeue - request in progress");
+      DEBUG_LOG(@"  ├── Can't dequeue - request already in progress");
     }
     if ([self.requestQueue count] == 0) {
       DEBUG_LOG(@"  ├── Empty queue");
@@ -196,5 +200,40 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
   return [mutableRequest copy];
 }
 
+- (void)sendNextRequest {
+  if ([self.requestQueue count] > 0) {
+    NSURLRequest* nextRequest = [self.requestQueue objectAtIndex:0];
+    [self sendAsynchronousRequest:nextRequest];
+  }
+}
+
+- (NSMutableArray *)validatedQueueWithData:(NSData *)data {
+  NSArray* queue = nil;
+  
+  if (data) {
+    @try {
+      queue = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+      
+      // enforce correct data structure
+      if (![queue isKindOfClass:[NSArray class]]) {
+        return [NSMutableArray array];
+      }
+      
+      // enforce correct types in the array (NSURLRequest)
+      else {
+        for (id item in queue) {
+          if (![item isKindOfClass:[NSURLRequest class]]) {
+            return [NSMutableArray array];
+          }
+        }
+      }
+    }
+    @catch (NSException* exception) {
+      queue = nil;
+    }
+  }
+  
+  return queue ? [NSMutableArray arrayWithArray:queue] : [NSMutableArray array];
+}
 
 @end
