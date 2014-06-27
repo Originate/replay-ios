@@ -19,7 +19,7 @@
 + (void)trackWithAPIKey:(NSString *)apiKey;
 
 // Endpoint methods
-+ (void)trackEvent:(NSString *)eventName withData:(NSDictionary *)eventProperties;
++ (void)trackEvent:(NSString *)eventName distinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
 + (void)updateAlias:(NSString *)userAlias;
 
 // Dispatch

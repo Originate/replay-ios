@@ -38,8 +38,14 @@
 
 #pragma mark - Public methods
 
-- (NSURLRequest *)requestForEvent:(NSString *)eventName withData:(NSDictionary *)data {
-  NSDictionary* json = [self jsonForEvent:eventName withData:data];
+- (NSURLRequest *)requestForEvent:(NSString *)eventName
+                       distinctId:(NSString *)distinctId
+                       properties:(NSDictionary *)properties
+{
+  NSDictionary* json = [self jsonForEvent:eventName
+                               distinctId:distinctId
+                               properties:properties];
+  
   return [ReplayAPIManager postRequestTo:@"events" withBody:json];
 }
 
@@ -83,21 +89,23 @@
 
 #pragma mark - Endpoint payload definitions
 
-- (NSDictionary *)jsonForEvent:(NSString *)eventName withData:(NSDictionary *)data {
-  NSMutableDictionary* dataJson =
-    [@{@"event": eventName} mutableCopy];
+- (NSDictionary *)jsonForEvent:(NSString *)eventName
+                    distinctId:(NSString *)distinctId
+                    properties:(NSDictionary *)properties
+{
+  NSMutableDictionary* propertiesJson = [@{} mutableCopy];
   
   NSDictionary* json =
-    @{kReplayKey: self.apiKey,
-      kClientId : self.clientUUID,
-      kSessionId: self.sessionUUID,
-      kData     : dataJson};
+    @{kReplayKey   : self.apiKey,
+      kClientId    : self.clientUUID,
+      kSessionId   : self.sessionUUID,
+      kDistinctId  : distinctId ?: @"",
+      kProperties  : properties,
+      @"event_name": eventName};
 
   // add the key-value pairs to the dictionary under json[data]
-  for (id key in data) {
-    if ([key respondsToSelector:@selector(isEqualToString:)] && ![key isEqualToString:@"event"]) {
-      [dataJson setObject:data[key] forKey:key];
-    }
+  for (id key in properties) {
+    [propertiesJson setObject:properties[key] forKey:key];
   }
   
   return json;

@@ -17,7 +17,10 @@
 - (void)setAPIKey:(NSString *)apiKey clientUUID:(NSString *)clientUUID sessionUUID:(NSString *)sessionUUID;
 - (void)updateSessionUUID:(NSString *)sessionUUID;
 
-- (NSURLRequest *)requestForEvent:(NSString *)eventName withData:(NSDictionary *)data;
+- (NSURLRequest *)requestForEvent:(NSString *)eventName
+                       distinctId:(NSString *)distinctId
+                       properties:(NSDictionary *)properties;
+
 - (NSURLRequest *)requestForAlias:(NSString *)alias;
 
 @end

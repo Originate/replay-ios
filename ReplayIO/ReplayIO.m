@@ -88,9 +88,9 @@
   [[ReplayIO sharedTracker] updateAlias:userAlias];
 }
 
-+ (void)trackEvent:(NSString *)eventName withData:(NSDictionary *)eventProperties {
++ (void)trackEvent:(NSString *)eventName distinctId:(NSString *)distinctId properties:(NSDictionary *)properties {
   CONTINUE_IF_REPLAY_IS_ENABLED;
-  [[ReplayIO sharedTracker] trackEvent:eventName withData:eventProperties];
+  [[ReplayIO sharedTracker] trackEvent:eventName distinctId:distinctId properties:properties];
 }
 
 + (void)setDebugMode:(BOOL)debugMode {
@@ -134,8 +134,10 @@
   [self.replayQueue enqueue:request];
 }
 
-- (void)trackEvent:(NSString *)eventName withData:(NSDictionary *)eventProperties {
-  NSURLRequest* request = [self.replayAPIManager requestForEvent:eventName withData:eventProperties];
+- (void)trackEvent:(NSString *)eventName distinctId:(NSString *)distinctId properties:(NSDictionary *)properties {
+  NSURLRequest* request = [self.replayAPIManager requestForEvent:eventName
+                                                      distinctId:distinctId
+                                                      properties:properties];
 
   [self.replayQueue enqueue:request];
 }

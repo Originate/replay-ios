@@ -10,10 +10,11 @@
 
 
 // JSON keys
-#define kReplayKey @"replayKey"
-#define kClientId  @"clientId"
-#define kSessionId @"sessionId"
-#define kData      @"data"
+#define kReplayKey  @"replay_key"
+#define kClientId   @"client_id"
+#define kSessionId  @"session_id"
+#define kDistinctId @"distinct_id"
+#define kProperties @"properties"
 
 // Replay.IO server url
 static NSString* const REPLAY_URL  = @"http://0.0.0.0:3000/"; //@"http://10.0.60.43:3000/";
