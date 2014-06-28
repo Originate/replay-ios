@@ -21,6 +21,7 @@
                        distinctId:(NSString *)distinctId
                        properties:(NSDictionary *)properties;
 
-- (NSURLRequest *)requestForAlias:(NSString *)alias;
+- (NSURLRequest *)requestForTraitsWithDistinctId:(NSString *)distinctId
+                                      properties:(NSDictionary *)properties;
 
 @end

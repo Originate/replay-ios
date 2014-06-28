@@ -48,16 +48,18 @@
                     clientUUID:kClientUUID
                   sessionUUID:kSessionUUID];
   
-  NSDictionary* correctJson = @{@"replayKey": kTestApiKey,
-                                @"clientId" : kClientUUID,
-                                @"sessionId": kSessionUUID,
-                                @"data"     : @{@"event": @"myEventName",
-                                                @"1"    : @"one",
-                                                @"2"    : @"two",
-                                                @"3"    : @"three"}};
+  NSDictionary* correctJson = @{@"replay_key" : kTestApiKey,
+                                @"client_id"  : kClientUUID,
+                                @"session_id" : kSessionUUID,
+                                @"distinct_id": @"abc",
+                                @"event_name" : @"myEventName",
+                                @"properties" : @{@"1"   : @"one",
+                                                  @"2"   : @"two",
+                                                  @"3"   : @"three"}};
   
   NSURLRequest* request = [_replayAPIManager requestForEvent:@"myEventName"
-                                                    withData:@{@"1": @"one",
+                                                  distinctId:@"abc"
+                                                  properties:@{@"1": @"one",
                                                                @"2": @"two",
                                                                @"3": @"three"}];
   
@@ -76,11 +78,17 @@
                     clientUUID:kClientUUID
                    sessionUUID:kSessionUUID];
   
-  NSDictionary* correctJson = @{@"replayKey": kTestApiKey,
-                                @"clientId" : kClientUUID,
-                                @"alias"    : @"testAlias"};
+  NSDictionary* correctJson = @{@"replay_key" : kTestApiKey,
+                                @"client_id"  : kClientUUID,
+                                @"session_id" : kSessionUUID,
+                                @"distinct_id": @"xyz",
+                                @"properties" : @{@"a": @"A",
+                                                  @"b": @"B",
+                                                  @"c": @"C"}};
   
-  NSURLRequest* request = [_replayAPIManager requestForAlias:@"testAlias"];
+  NSURLRequest* request = [_replayAPIManager requestForTraitsWithDistinctId:@"xyz" properties:@{@"a": @"A",
+                                                                                                @"b": @"B",
+                                                                                                @"c": @"C"}];
   
   XCTAssertTrue([request.HTTPMethod isEqualToString:@"POST"],
                 @"Request for alias should have HTTP Method: POST");
@@ -88,8 +96,8 @@
   XCTAssertTrue([request.HTTPBody isEqualToData:[NSJSONSerialization dataWithJSONObject:correctJson options:0 error:nil]],
                 @"Request for alias should have correct HTTP body");
   
-  XCTAssertTrue([[request.URL absoluteString] rangeOfString:@"/aliases"].location != NSNotFound,
-                @"Request url should contain /aliases");
+  XCTAssertTrue([[request.URL absoluteString] rangeOfString:@"/traits"].location != NSNotFound,
+                @"Request url should contain /traits");
 }
 
 @end

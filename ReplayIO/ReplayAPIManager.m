@@ -49,9 +49,13 @@
   return [ReplayAPIManager postRequestTo:@"events" withBody:json];
 }
 
-- (NSURLRequest *)requestForAlias:(NSString *)alias {
-  NSDictionary* json = [self jsonForAlias:alias];
-  return [ReplayAPIManager postRequestTo:@"aliases" withBody:json];
+- (NSURLRequest *)requestForTraitsWithDistinctId:(NSString *)distinctId
+                                      properties:(NSDictionary *)properties
+{
+  NSDictionary* json = [self jsonForTraitsWithDistinctId:distinctId
+                                              properties:properties];
+  
+  return [ReplayAPIManager postRequestTo:@"traits" withBody:json];
 }
 
 
@@ -103,7 +107,7 @@
       kProperties  : properties,
       @"event_name": eventName};
 
-  // add the key-value pairs to the dictionary under json[data]
+  // add the key-value pairs to the dictionary under json[properties]
   for (id key in properties) {
     [propertiesJson setObject:properties[key] forKey:key];
   }
@@ -111,11 +115,22 @@
   return json;
 }
 
-- (NSDictionary *)jsonForAlias:(NSString *)alias {
+- (NSDictionary *)jsonForTraitsWithDistinctId:(NSString *)distinctId
+                                   properties:(NSDictionary *)properties
+{
+  NSMutableDictionary* propertiesJson = [@{} mutableCopy];
+  
   NSDictionary* json =
-    @{kReplayKey: self.apiKey,
-      kClientId : self.clientUUID,
-      @"alias"  : alias};
+    @{kReplayKey : self.apiKey,
+      kClientId  : self.clientUUID,
+      kSessionId : self.sessionUUID,
+      kDistinctId: distinctId ?: @"",
+      kProperties: properties};
+  
+  // add the key-value pairs to the dictionary under json[properties]
+  for (id key in properties) {
+    [propertiesJson setObject:properties[key] forKey:key];
+  }
   
   return json;
 }

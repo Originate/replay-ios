@@ -20,7 +20,7 @@
 
 // Endpoint methods
 + (void)trackEvent:(NSString *)eventName distinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
-+ (void)updateAlias:(NSString *)userAlias;
++ (void)updateTraitsWithDistinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
 
 // Dispatch
 + (void)setDispatchInterval:(NSInteger)interval;
