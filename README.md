@@ -49,6 +49,9 @@ Possible TODOs:
 
 We have tests, write and use them! Xcode 5 seems to have [removed](http://stackoverflow.com/questions/20605509/how-do-i-automatically-perform-unit-tests-on-each-build-and-run-action-in-xcod) the option to automatically test after building.
 
+### TODOs:
+* OCMock testing
+
 ## Documentation for framework users
 
 The framework lives as a singleton in your app. For convenience, all instance methods have class method counterparts, so there's no need to first obtain the global instance `[ReplayIO sharedTracker]`.
@@ -68,13 +71,16 @@ The framework lives as a singleton in your app. For convenience, all instance me
 ### Tracking Events
 
 ```obj-c
-[ReplayIO trackEvent:@"Event name" withData:@{@"key": @"value"}];
+[ReplayIO trackEvent:@"Event name"
+          distinctId:@"A distinct string that identifies the user"
+          properties:@{@"key": @"value"}];
 ```
 
-### Set Alias
+### Set Traits
 
 ```obj-c
-[ReplayIO updateAlias:@"Custom alias"];
+[ReplayIO updateTraitsWithDistinctId:@"A distinct string that identifies the user"
+                          properties:@{@"key": @"value"}];
 ```
 
 ### Debugging
@@ -92,7 +98,7 @@ The framework lives as a singleton in your app. For convenience, all instance me
 
 ### Dispatching
 
-By default, ReplayIO will dispatch event data as soon as the `trackEvent:withData:` method is called. You can choose to dispatch data periodically as well by modifying the dispatch interval. Specifying a negative interval will disable periodic dispatch.
+By default, ReplayIO will dispatch event data as soon as the `trackEvent:distinctId:properties:` method is called. You can choose to dispatch data periodically as well by modifying the dispatch interval. Specifying a negative interval will disable periodic dispatch.
 
 ```obj-c
 [ReplayIO setDispatchInterval:120];  // dispatch every 2 minutes
