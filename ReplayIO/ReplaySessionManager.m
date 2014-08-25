@@ -17,6 +17,7 @@
   
   if (![defaults objectForKey:kSessionKey]) {
     [defaults setObject:[ReplaySessionManager generateUUID] forKey:kSessionKey];
+    #warning NOTE: no call to synchronize
   }
   
   return [defaults objectForKey:kSessionKey];
@@ -33,6 +34,7 @@
   
   NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
   [defaults removeObjectForKey:kSessionKey];
+  #warning NOTE: no call to synchronize
 }
 
 @end

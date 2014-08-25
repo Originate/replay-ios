@@ -82,7 +82,7 @@
   NSError* error = nil;
   NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
                                                     options:0
-                                                      error:&error];
+                                                      error:&error]; // NOTE: no error handling
   return jsonData;
 }
 
@@ -92,7 +92,7 @@
 
 
 #pragma mark - Endpoint payload definitions
-
+// NOTE: this doesn't return json, why not call this dictionaryForEvent:distinctId:properties: also Id should be capitalized (i.e. ID)
 - (NSDictionary *)jsonForEvent:(NSString *)eventName
                     distinctId:(NSString *)distinctId
                     properties:(NSDictionary *)properties
@@ -109,8 +109,11 @@
 
   // add the key-value pairs to the dictionary under json[properties]
   for (id key in properties) {
-    [propertiesJson setObject:properties[key] forKey:key];
+    [propertiesJson setObject:properties[key] forKey:key]; // NOTE: what does this do? We're mutating a dictionary that immediately goes out of scope
   }
+  
+  // NOTE: the above can be done with [propertiesJson addEntriesFromDictionary:properties]
+
   
   return json;
 }
@@ -129,7 +132,7 @@
   
   // add the key-value pairs to the dictionary under json[properties]
   for (id key in properties) {
-    [propertiesJson setObject:properties[key] forKey:key];
+    [propertiesJson setObject:properties[key] forKey:key]; // NOTE: still not sure what this is doing?
   }
   
   return json;

@@ -10,7 +10,7 @@
 
 @interface ReplayIO : NSObject
 
-@property (nonatomic) BOOL debugMode;
+@property (nonatomic) BOOL debugMode; // NOTE: maybe getter should be something like `isDebugMode`
 
 // ReplayIO singleton object
 + (ReplayIO *)sharedTracker;
@@ -23,13 +23,13 @@
 + (void)updateTraitsWithDistinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
 
 // Dispatch
-+ (void)setDispatchInterval:(NSInteger)interval;
++ (void)setDispatchInterval:(NSInteger)interval; // NOTE: why isn't this a property?
 + (void)dispatch;
 
 // Enable/disable
 + (void)enable;
 + (void)disable;
 
-+ (void)setDebugMode:(BOOL)debugMode;
++ (void)setDebugMode:(BOOL)debugMode; // NOTE: This is a property, any reason why it's also a class method?
 
 @end

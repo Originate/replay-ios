@@ -48,7 +48,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
   Reachability* reachability = [notification object];
   
   // we have internet access so try to dequeue now
-  if ([reachability isReachable] && self.dispatchInterval >= 0) {
+  if ([reachability isReachable] && self.dispatchInterval >= 0) { // NOTE: may be useful to allow developers to turn off network access through cellular
     DEBUG_LOG(@">>>>> Reachability: reachable");
     [self dequeue];
   }
@@ -157,7 +157,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
                              
                              // dequeue next request
                              if ([self.requestQueue count] > 0) {
-                               [self sendNextRequest];
+                               [self sendNextRequest]; // NOTE: should -sendAsynchronousRequest: be recursive via -sendNextRequest? It'd be better to have -sendAsynchronousRequest: take a completion block. -sendNextRequest could also take a completion block – -deqeue would then handle the logic surrounding consuming the queue
                                return;
                              }
                            }
@@ -178,7 +178,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
   if (!self.currentlyProcessingQueue && [self.requestQueue count] > 0) {
     self.currentlyProcessingQueue = YES;
     
-    NSURLRequest* firstRequest = [self.requestQueue objectAtIndex:0];
+    NSURLRequest* firstRequest = [self.requestQueue objectAtIndex:0]; // NOTE: why doesn't this just call -sendNextRequest?
     [self sendAsynchronousRequest:firstRequest];
   }
   else {
@@ -193,6 +193,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
   }
 }
 
+// NOTE: This may be better in a private category, this method isn't really part of a ReplayQueue
 - (NSURLRequest *)urlRequest:(NSURLRequest *)request withTimeout:(NSTimeInterval)timeout {
   NSMutableURLRequest* mutableRequest = [request mutableCopy];
   [mutableRequest setTimeoutInterval:timeout];
@@ -200,6 +201,8 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
   return [mutableRequest copy];
 }
 
+// NOTE: It'd be better if -sendNextRequest mutated the requestQueue instead of passing the request to -sendAsynchronousRequest: and having that do the mutation,
+// there's no reason -sendAsynchronousRequest: can only send the head of the queue, but it's current implementation makes that assumption
 - (void)sendNextRequest {
   if ([self.requestQueue count] > 0) {
     NSURLRequest* nextRequest = [self.requestQueue objectAtIndex:0];
@@ -217,10 +220,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
       // enforce correct data structure
       if (![queue isKindOfClass:[NSArray class]]) {
         return [NSMutableArray array];
-      }
-      
-      // enforce correct types in the array (NSURLRequest)
-      else {
+      } else {  // enforce correct types in the array (NSURLRequest)
         for (id item in queue) {
           if (![item isKindOfClass:[NSURLRequest class]]) {
             return [NSMutableArray array];

@@ -12,10 +12,11 @@
 #import "ReplaySessionManager.h"
 #import "ReplayQueue.h"
 
-
-#define CONTINUE_IF_REPLAY_IS_ENABLED do {           \
+// NOTE: no need to wrap this macro in do{}while
+// NOTE: further a macro might not be the best idea, no real gain over having the body instead of the macro
+#define CONTINUE_IF_REPLAY_IS_ENABLED {           \
   if (![ReplayIO sharedTracker].enabled) { return; } \
-} while(0)
+}
 
 
 @interface ReplayIO ()
