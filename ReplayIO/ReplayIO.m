@@ -10,7 +10,9 @@
 #import "ReplayIO.h"
 #import "ReplayAPIManager.h"
 #import "ReplaySessionManager.h"
-#import "ReplayQueue.h"
+#import "ReplayRequestQueue.h"
+#import "ReplayRequest.h"
+#import "Reachability.h"
 
 // NOTE: no need to wrap this macro in do{}while
 // NOTE: further a macro might not be the best idea, no real gain over having the body instead of the macro
@@ -18,11 +20,19 @@
   if (![ReplayIO sharedTracker].enabled) { return; } \
 }
 
+static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 
 @interface ReplayIO ()
+
 @property (nonatomic) BOOL enabled;
+@property (nonatomic, readwrite, assign) BOOL paused;
 @property (nonatomic, strong) ReplayAPIManager* replayAPIManager;
-@property (nonatomic, strong) ReplayQueue* replayQueue;
+@property (nonatomic, strong) ReplayRequestQueue* replayQueue;
+@property (nonatomic, strong, readwrite) NSOperationQueue* replayOperationQueue;
+@property (nonatomic, strong, readwrite) NSOperationQueue* persistenceOperationQueue;
+@property (nonatomic, strong, readwrite) NSMutableDictionary* pendingReplayRequests;
+@property (nonatomic, strong, readwrite) Reachability* reachability;
+
 @end
 
 @implementation ReplayIO
@@ -33,7 +43,9 @@
 
   dispatch_once(&onceToken, ^{               
     sharedTracker = [[ReplayIO alloc] init];
-  });                                        
+    [sharedTracker loadPendingEventsFromDisk];
+  });
+  
   return sharedTracker;
 }
 
@@ -41,11 +53,34 @@
 - (instancetype)init {
   self = [super init];
   if (self) {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reachabilityChanged:)
+                                                 name:kReachabilityChangedNotification
+                                               object:nil];
     self.enabled = YES;
     self.replayAPIManager = [[ReplayAPIManager alloc] init];
-    self.replayQueue = [[ReplayQueue alloc] init];
+    self.replayQueue = [[ReplayRequestQueue alloc] init];
+    self.reachability = [[Reachability alloc] init];
+    [self.reachability startNotifier];
+    self.replayOperationQueue = [[NSOperationQueue alloc] init];
+    self.persistenceOperationQueue = [[NSOperationQueue alloc] init];
   }
   return self;
+}
+
+- (void)dealloc {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)setPaused:(BOOL)paused {
+  if(_paused != paused){
+    _paused = paused;
+    if(_paused) {
+      self.replayOperationQueue.suspended = YES;
+    }else{
+      self.replayOperationQueue.suspended = !self.enabled;
+    }
+  }
 }
 
 
@@ -69,12 +104,10 @@
 
 + (void)applicationDidEnterBackground:(NSNotification *)notification {
   [ReplaySessionManager endSession];
-  [[ReplayIO sharedTracker].replayQueue saveQueueToDisk];
 }
 
 + (void)applicationWillEnterForeground:(NSNotification *)notification {
   [[ReplayIO sharedTracker].replayAPIManager updateSessionUUID:[ReplaySessionManager sessionUUID]];
-  [[ReplayIO sharedTracker].replayQueue loadQueueFromDisk];
 }
 
 
@@ -85,8 +118,7 @@
 }
 
 + (void)updateTraitsWithDistinctId:(NSString *)distinctId
-                        properties:(NSDictionary *)properties
-{
+                        properties:(NSDictionary *)properties { 
   CONTINUE_IF_REPLAY_IS_ENABLED;
   [[ReplayIO sharedTracker] updateTraitsWithDistinctId:distinctId
                                             properties:properties];
@@ -94,8 +126,7 @@
 
 + (void)trackEvent:(NSString *)eventName
         distinctId:(NSString *)distinctId
-        properties:(NSDictionary *)properties
-{
+        properties:(NSDictionary *)properties {
   CONTINUE_IF_REPLAY_IS_ENABLED;
   [[ReplayIO sharedTracker] trackEvent:eventName distinctId:distinctId properties:properties];
 }
@@ -107,53 +138,109 @@
 + (void)enable {
   DEBUG_LOG(@"Tracking = ON");
   [ReplayIO sharedTracker].enabled = YES;
-  [[ReplayIO sharedTracker].replayQueue startTimerIfNeeded];
+  
+  if(![ReplayIO sharedTracker].paused){
+   [ReplayIO sharedTracker].replayOperationQueue.suspended = NO;
+  }
 }
 
 + (void)disable {
   DEBUG_LOG(@"Tracking = OFF");
   [ReplayIO sharedTracker].enabled = NO;
-  [[ReplayIO sharedTracker].replayQueue stopTimer];
+  [ReplayIO sharedTracker].replayOperationQueue.suspended = YES;
 }
 
-+ (void)setDispatchInterval:(NSInteger)interval {
-  [[ReplayIO sharedTracker].replayQueue setDispatchInterval:interval];
-}
-
-+ (void)dispatch {
-  CONTINUE_IF_REPLAY_IS_ENABLED;
-  [[ReplayIO sharedTracker].replayQueue dispatch];
++ (NSOperation*)networkOperationForRequest:(NSURLRequest*)request completion:(void(^)(NSURLResponse* response, NSError* error))completion{
+  return [NSBlockOperation blockOperationWithBlock:^{
+    NSURLResponse* response;
+    NSError* error;
+    [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    if(completion){
+      [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+          completion(response, error);
+      }];
+    }
+  }];
 }
 
 
 #pragma mark - Underlying instance methods
 
-- (void)trackWithAPIKey:(NSString *)apiKey {
-  
+- (void)trackWithAPIKey:(NSString *)apiKey{
   [self.replayAPIManager setAPIKey:apiKey
                          clientUUID:[[[UIDevice currentDevice] identifierForVendor] UUIDString]
                          sessionUUID:[ReplaySessionManager sessionUUID]];
 }
 
 - (void)updateTraitsWithDistinctId:(NSString *)distinctId
-                        properties:(NSDictionary *)properties
-{
-  NSURLRequest* request = [self.replayAPIManager requestForTraitsWithDistinctId:distinctId
-                                                                     properties:properties];
-  
-  [self.replayQueue enqueue:request];
+                        properties:(NSDictionary *)properties{
+  NSURLRequest* URLRequest = [self.replayAPIManager requestForTraitsWithDistinctId:distinctId
+                                                                        properties:properties];
+  [self addReplayOperationForRequest:[ReplayRequest requestWithURLRequest:URLRequest]];
 }
 
 - (void)trackEvent:(NSString *)eventName
         distinctId:(NSString *)distinctId
-        properties:(NSDictionary *)properties
-{
-  NSURLRequest* request = [self.replayAPIManager requestForEvent:eventName
-                                                      distinctId:distinctId
-                                                      properties:properties];
-
-  [self.replayQueue enqueue:request];
+        properties:(NSDictionary *)properties{
+  NSURLRequest* URLRequest = [self.replayAPIManager requestForEvent:eventName
+                                                         distinctId:distinctId
+                                                         properties:properties];
+  [self addReplayOperationForRequest:[ReplayRequest requestWithURLRequest:URLRequest]];
 }
 
+- (void)addReplayOperationForRequest:(ReplayRequest*)request{
+  NSOperation* replayNetworkOperation = [[self class] networkOperationForRequest:request.networkRequest completion:^(NSURLResponse *response, NSError *error) {
+    if(!error){
+      // Nothing to do here, we succeeded
+    }else{ // Next time we get network access we'll add all of the operations on the pending queue
+      [self.replayQueue addRequest:request];
+    }
+  }];
+  
+  [self.replayOperationQueue addOperation:replayNetworkOperation];
+}
+
+- (void)savePendingEventsToDisk{
+  self.paused = YES;
+  NSData* data = [self.replayQueue serializedQueue];
+  if(data){
+    [self.persistenceOperationQueue addOperationWithBlock:^{
+      [[NSUserDefaults standardUserDefaults] setObject:data forKey:REPLAY_PLIST_KEY];
+      [[NSUserDefaults standardUserDefaults] synchronize];
+      DEBUG_LOG(@"persisted events to disk");
+    }];
+  }else{
+    self.paused = NO;
+  }
+}
+
+- (void)loadPendingEventsFromDisk{
+  self.paused = YES;
+  [self.persistenceOperationQueue addOperationWithBlock:^{
+    NSData* data = [[NSUserDefaults standardUserDefaults] objectForKey:REPLAY_PLIST_KEY];
+    if(data){
+      DEBUG_LOG(@"found existing queue of Replay events");
+    }
+    
+    ReplayRequestQueue* existingQueue = [ReplayRequestQueue requestQueueWithData:data];
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+      self.replayQueue = existingQueue;
+      self.paused = NO;
+    }];
+  }];
+}
+
+- (void)reachabilityChanged:(NSNotification*)notification{
+  if(self.reachability.isReachable){
+    DEBUG_LOG(@"network is reachable");
+
+    for(ReplayRequest* request in self.replayQueue.requests){
+      [self.replayQueue removeRequest:request];
+      [self addReplayOperationForRequest:request];
+    }
+  }else{
+    DEBUG_LOG(@"network unreachable");
+  }
+}
 
 @end

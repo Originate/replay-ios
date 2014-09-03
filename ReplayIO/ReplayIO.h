@@ -22,13 +22,11 @@
 + (void)trackEvent:(NSString *)eventName distinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
 + (void)updateTraitsWithDistinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
 
-// Dispatch
-+ (void)setDispatchInterval:(NSInteger)interval; // NOTE: why isn't this a property?
-+ (void)dispatch;
-
 // Enable/disable
 + (void)enable;
 + (void)disable;
+
+- (void)savePendingEventsToDisk;
 
 + (void)setDebugMode:(BOOL)debugMode; // NOTE: This is a property, any reason why it's also a class method?
 

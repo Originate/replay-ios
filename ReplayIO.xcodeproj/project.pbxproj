@@ -22,6 +22,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		341E3CDD19B7B55900CFD26A /* ReplayRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 341E3CDB19B7B55900CFD26A /* ReplayRequest.h */; };
+		341E3CDE19B7B55900CFD26A /* ReplayRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 341E3CDC19B7B55900CFD26A /* ReplayRequest.m */; };
 		9F1B804E18EC812800A47925 /* ReplayIOTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1B804D18EC812800A47925 /* ReplayIOTests.m */; };
 		9F1B805018EC863A00A47925 /* ReplayAPIManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1B804F18EC863A00A47925 /* ReplayAPIManagerTests.m */; };
 		9F2749F518F0C1EA00CE5238 /* ReplaySessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F2749F318F0C1EA00CE5238 /* ReplaySessionManager.h */; };
@@ -30,9 +32,9 @@
 		9F4122BF18E8C67100FDDFFB /* ReplayConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4122BB18E8C67100FDDFFB /* ReplayConfig.h */; };
 		9F53452018F324EB00E73521 /* Reachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F53451E18F324EB00E73521 /* Reachability.h */; };
 		9F53452118F324EB00E73521 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F53451F18F324EB00E73521 /* Reachability.m */; };
-		9F53452418F336C900E73521 /* ReplayQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F53452218F336C900E73521 /* ReplayQueue.h */; };
-		9F53452518F336C900E73521 /* ReplayQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F53452318F336C900E73521 /* ReplayQueue.m */; };
-		9F53452718F3392300E73521 /* ReplayQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F53452618F3392300E73521 /* ReplayQueueTests.m */; };
+		9F53452418F336C900E73521 /* ReplayRequestQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F53452218F336C900E73521 /* ReplayRequestQueue.h */; };
+		9F53452518F336C900E73521 /* ReplayRequestQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F53452318F336C900E73521 /* ReplayRequestQueue.m */; };
+		9F53452718F3392300E73521 /* ReplayRequestQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F53452618F3392300E73521 /* ReplayRequestQueueTests.m */; };
 		9F83B53218E5FB1E0031A36B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F83B53118E5FB1E0031A36B /* Foundation.framework */; };
 		9F83B53718E5FB1E0031A36B /* ReplayIO.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9F83B53618E5FB1E0031A36B /* ReplayIO.h */; };
 		9F83B53918E5FB1E0031A36B /* ReplayIO.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F83B53818E5FB1E0031A36B /* ReplayIO.m */; };
@@ -79,6 +81,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		341E3CDB19B7B55900CFD26A /* ReplayRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayRequest.h; sourceTree = "<group>"; };
+		341E3CDC19B7B55900CFD26A /* ReplayRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayRequest.m; sourceTree = "<group>"; };
 		9F1B804D18EC812800A47925 /* ReplayIOTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayIOTests.m; sourceTree = "<group>"; };
 		9F1B804F18EC863A00A47925 /* ReplayAPIManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ReplayAPIManagerTests.m; path = ReplayIOTests/ReplayAPIManagerTests.m; sourceTree = SOURCE_ROOT; };
 		9F2749F318F0C1EA00CE5238 /* ReplaySessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaySessionManager.h; sourceTree = "<group>"; };
@@ -87,9 +91,9 @@
 		9F4122BB18E8C67100FDDFFB /* ReplayConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayConfig.h; sourceTree = "<group>"; };
 		9F53451E18F324EB00E73521 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = Reachability/Reachability.h; sourceTree = "<group>"; };
 		9F53451F18F324EB00E73521 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = Reachability/Reachability.m; sourceTree = "<group>"; };
-		9F53452218F336C900E73521 /* ReplayQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayQueue.h; sourceTree = "<group>"; };
-		9F53452318F336C900E73521 /* ReplayQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayQueue.m; sourceTree = "<group>"; };
-		9F53452618F3392300E73521 /* ReplayQueueTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ReplayQueueTests.m; path = ReplayIOTests/ReplayQueueTests.m; sourceTree = SOURCE_ROOT; };
+		9F53452218F336C900E73521 /* ReplayRequestQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayRequestQueue.h; sourceTree = "<group>"; };
+		9F53452318F336C900E73521 /* ReplayRequestQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayRequestQueue.m; sourceTree = "<group>"; };
+		9F53452618F3392300E73521 /* ReplayRequestQueueTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ReplayRequestQueueTests.m; path = ReplayIOTests/ReplayRequestQueueTests.m; sourceTree = SOURCE_ROOT; };
 		9F83B52E18E5FB1E0031A36B /* libReplayIO.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libReplayIO.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F83B53118E5FB1E0031A36B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9F83B53518E5FB1E0031A36B /* ReplayIO-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ReplayIO-Prefix.pch"; sourceTree = "<group>"; };
@@ -176,8 +180,10 @@
 				9F83B53818E5FB1E0031A36B /* ReplayIO.m */,
 				9FA2F34E18E68B63000C0883 /* ReplayAPIManager.h */,
 				9FA2F34F18E68B63000C0883 /* ReplayAPIManager.m */,
-				9F53452218F336C900E73521 /* ReplayQueue.h */,
-				9F53452318F336C900E73521 /* ReplayQueue.m */,
+				9F53452218F336C900E73521 /* ReplayRequestQueue.h */,
+				9F53452318F336C900E73521 /* ReplayRequestQueue.m */,
+				341E3CDB19B7B55900CFD26A /* ReplayRequest.h */,
+				341E3CDC19B7B55900CFD26A /* ReplayRequest.m */,
 				9F2749F318F0C1EA00CE5238 /* ReplaySessionManager.h */,
 				9F2749F418F0C1EA00CE5238 /* ReplaySessionManager.m */,
 				9F4122BB18E8C67100FDDFFB /* ReplayConfig.h */,
@@ -202,7 +208,7 @@
 				9F1B804D18EC812800A47925 /* ReplayIOTests.m */,
 				9F1B804F18EC863A00A47925 /* ReplayAPIManagerTests.m */,
 				9F2749F718F0C20C00CE5238 /* ReplaySessionManagerTests.m */,
-				9F53452618F3392300E73521 /* ReplayQueueTests.m */,
+				9F53452618F3392300E73521 /* ReplayRequestQueueTests.m */,
 				9F83B54818E5FB1E0031A36B /* Supporting Files */,
 			);
 			path = ReplayIOTests;
@@ -227,7 +233,8 @@
 				9F9196F518EA48D200D25B95 /* ReplayHelper.h in Headers */,
 				9F4122BF18E8C67100FDDFFB /* ReplayConfig.h in Headers */,
 				9FA2F35018E68B63000C0883 /* ReplayAPIManager.h in Headers */,
-				9F53452418F336C900E73521 /* ReplayQueue.h in Headers */,
+				341E3CDD19B7B55900CFD26A /* ReplayRequest.h in Headers */,
+				9F53452418F336C900E73521 /* ReplayRequestQueue.h in Headers */,
 				9F53452018F324EB00E73521 /* Reachability.h in Headers */,
 				9F2749F518F0C1EA00CE5238 /* ReplaySessionManager.h in Headers */,
 				9F83B55E18E63FCF0031A36B /* ReplayIO.h in Headers */,
@@ -358,7 +365,8 @@
 			files = (
 				9F83B53918E5FB1E0031A36B /* ReplayIO.m in Sources */,
 				9F2749F618F0C1EA00CE5238 /* ReplaySessionManager.m in Sources */,
-				9F53452518F336C900E73521 /* ReplayQueue.m in Sources */,
+				341E3CDE19B7B55900CFD26A /* ReplayRequest.m in Sources */,
+				9F53452518F336C900E73521 /* ReplayRequestQueue.m in Sources */,
 				9F53452118F324EB00E73521 /* Reachability.m in Sources */,
 				9FA2F35118E68B63000C0883 /* ReplayAPIManager.m in Sources */,
 			);
@@ -370,7 +378,7 @@
 			files = (
 				9F1B804E18EC812800A47925 /* ReplayIOTests.m in Sources */,
 				9F2749F818F0C20C00CE5238 /* ReplaySessionManagerTests.m in Sources */,
-				9F53452718F3392300E73521 /* ReplayQueueTests.m in Sources */,
+				9F53452718F3392300E73521 /* ReplayRequestQueueTests.m in Sources */,
 				9F1B805018EC863A00A47925 /* ReplayAPIManagerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
