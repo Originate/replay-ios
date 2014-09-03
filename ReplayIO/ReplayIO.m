@@ -14,11 +14,6 @@
 #import "ReplayRequest.h"
 #import "Reachability.h"
 
-// NOTE: no need to wrap this macro in do{}while
-// NOTE: further a macro might not be the best idea, no real gain over having the body instead of the macro
-#define CONTINUE_IF_REPLAY_IS_ENABLED {           \
-  if (![ReplayIO sharedTracker].enabled) { return; } \
-}
 
 static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 
@@ -118,8 +113,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 }
 
 + (void)updateTraitsWithDistinctId:(NSString *)distinctId
-                        properties:(NSDictionary *)properties { 
-  CONTINUE_IF_REPLAY_IS_ENABLED;
+                        properties:(NSDictionary *)properties {
   [[ReplayIO sharedTracker] updateTraitsWithDistinctId:distinctId
                                             properties:properties];
 }
@@ -127,7 +121,6 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 + (void)trackEvent:(NSString *)eventName
         distinctId:(NSString *)distinctId
         properties:(NSDictionary *)properties {
-  CONTINUE_IF_REPLAY_IS_ENABLED;
   [[ReplayIO sharedTracker] trackEvent:eventName distinctId:distinctId properties:properties];
 }
 
@@ -189,11 +182,11 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 }
 
 - (void)addReplayOperationForRequest:(ReplayRequest*)request{
+  [self.replayQueue addRequest:request];
+  
   NSOperation* replayNetworkOperation = [[self class] networkOperationForRequest:request.networkRequest completion:^(NSURLResponse *response, NSError *error) {
     if(!error){
-      // Nothing to do here, we succeeded
-    }else{ // Next time we get network access we'll add all of the operations on the pending queue
-      [self.replayQueue addRequest:request];
+      [self.replayQueue removeRequest:request];
     }
   }];
   
@@ -235,7 +228,6 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
     DEBUG_LOG(@"network is reachable");
 
     for(ReplayRequest* request in self.replayQueue.requests){
-      [self.replayQueue removeRequest:request];
       [self addReplayOperationForRequest:request];
     }
   }else{
