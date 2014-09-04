@@ -207,7 +207,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
   [self.persistenceOperationQueue addOperationWithBlock:^{
     NSData* data = [[NSUserDefaults standardUserDefaults] objectForKey:REPLAY_PLIST_KEY];
     if(data){
-      DEBUG_LOG(@"found existing queue of Replay events");
+      DEBUG_LOG(@"Found existing queue of Replay events");
     }
     
     ReplayRequestQueue* existingQueue = [ReplayRequestQueue requestQueueWithData:data];
@@ -220,13 +220,13 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 
 - (void)reachabilityChanged:(NSNotification*)notification{
   if(self.reachability.isReachable){
-    DEBUG_LOG(@"network is reachable");
+    DEBUG_LOG(@"Network is reachable");
     
     for(ReplayRequest* request in self.requestQueue.requests){
       [self addReplayOperationForRequest:request];
     }
   }else{
-    DEBUG_LOG(@"network unreachable");
+    DEBUG_LOG(@"Network is unreachable");
   }
 }
 

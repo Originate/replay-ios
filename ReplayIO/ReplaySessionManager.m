@@ -16,16 +16,15 @@
   NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
   
   if (![defaults objectForKey:kSessionKey]) {
+    DEBUG_LOG(@"Setting new session UUID");
     [defaults setObject:[ReplaySessionManager generateUUID] forKey:kSessionKey];
-    #warning NOTE: no call to synchronize
+    [defaults synchronize];
   }
   
   return [defaults objectForKey:kSessionKey];
 }
 
 + (NSString *)generateUUID {
-  DEBUG_LOG(@"Generating new session UUID");
-  
   return [[NSUUID UUID] UUIDString];
 }
 
@@ -34,7 +33,7 @@
   
   NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
   [defaults removeObjectForKey:kSessionKey];
-  #warning NOTE: no call to synchronize
+  [defaults synchronize];
 }
 
 @end
