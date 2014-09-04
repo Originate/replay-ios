@@ -55,7 +55,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
     self.enabled = YES;
     self.replayAPIManager = [[ReplayAPIManager alloc] init];
     self.replayQueue = [[ReplayRequestQueue alloc] init];
-    self.reachability = [[Reachability alloc] init];
+    self.reachability = [Reachability reachabilityForInternetConnection];
     [self.reachability startNotifier];
     self.replayOperationQueue = [[NSOperationQueue alloc] init];
     self.persistenceOperationQueue = [[NSOperationQueue alloc] init];
