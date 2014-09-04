@@ -10,24 +10,22 @@
 
 @interface ReplayIO : NSObject
 
-@property (nonatomic) BOOL debugMode; // NOTE: maybe getter should be something like `isDebugMode`
+@property (nonatomic, readwrite, assign, getter = isDebugMode) BOOL debugMode; // NOTE: maybe getter should be something like `isDebugMode`
 
 // ReplayIO singleton object
 + (ReplayIO *)sharedTracker;
 
 // Instantiation
-+ (void)trackWithAPIKey:(NSString *)apiKey;
+- (void)trackWithAPIKey:(NSString *)apiKey;
 
 // Endpoint methods
-+ (void)trackEvent:(NSString *)eventName distinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
-+ (void)updateTraitsWithDistinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
+- (void)trackEvent:(NSString *)eventName distinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
+- (void)updateTraitsWithDistinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
 
 // Enable/disable
-+ (void)enable;
-+ (void)disable;
+- (void)enable;
+- (void)disable;
 
 - (void)savePendingEventsToDisk;
-
-+ (void)setDebugMode:(BOOL)debugMode; // NOTE: This is a property, any reason why it's also a class method?
 
 @end

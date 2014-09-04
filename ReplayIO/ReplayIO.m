@@ -19,11 +19,11 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 
 @interface ReplayIO ()
 
-@property (nonatomic) BOOL enabled;
-@property (nonatomic, readwrite, assign) BOOL paused;
+@property (nonatomic, readwrite, assign, getter = isEnabled) BOOL enabled;
+@property (nonatomic, readwrite, assign, getter = isPaused) BOOL paused;
 @property (nonatomic, strong) ReplayAPIManager* replayAPIManager;
-@property (nonatomic, strong) ReplayRequestQueue* replayQueue;
-@property (nonatomic, strong, readwrite) NSOperationQueue* replayOperationQueue;
+@property (nonatomic, strong) ReplayRequestQueue* requestQueue;
+@property (nonatomic, strong, readwrite) NSOperationQueue* networkOperationQueue;
 @property (nonatomic, strong, readwrite) NSOperationQueue* persistenceOperationQueue;
 @property (nonatomic, strong, readwrite) NSMutableDictionary* pendingReplayRequests;
 @property (nonatomic, strong, readwrite) Reachability* reachability;
@@ -32,11 +32,16 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 
 @implementation ReplayIO
 
+
+#pragma mark - Public Interface
+
+#pragma mark - Lifecycle
+
 + (ReplayIO *)sharedTracker {
   static ReplayIO* sharedTracker = nil;
-  static dispatch_once_t onceToken;          
-
-  dispatch_once(&onceToken, ^{               
+  static dispatch_once_t onceToken;
+  
+  dispatch_once(&onceToken, ^{
     sharedTracker = [[ReplayIO alloc] init];
     [sharedTracker loadPendingEventsFromDisk];
   });
@@ -54,10 +59,10 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
                                                object:nil];
     self.enabled = YES;
     self.replayAPIManager = [[ReplayAPIManager alloc] init];
-    self.replayQueue = [[ReplayRequestQueue alloc] init];
+    self.requestQueue = [[ReplayRequestQueue alloc] init];
     self.reachability = [Reachability reachabilityForInternetConnection];
     [self.reachability startNotifier];
-    self.replayOperationQueue = [[NSOperationQueue alloc] init];
+    self.networkOperationQueue = [[NSOperationQueue alloc] init];
     self.persistenceOperationQueue = [[NSOperationQueue alloc] init];
   }
   return self;
@@ -67,17 +72,86 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+#pragma mark - Event Tracking
+
+
+- (void)updateTraitsWithDistinctId:(NSString *)distinctId
+                        properties:(NSDictionary *)properties{
+  NSURLRequest* URLRequest = [self.replayAPIManager requestForTraitsWithDistinctId:distinctId
+                                                                        properties:properties];
+  [self addReplayOperationForRequest:[ReplayRequest requestWithURLRequest:URLRequest]];
+}
+
+- (void)trackEvent:(NSString *)eventName
+        distinctId:(NSString *)distinctId
+        properties:(NSDictionary *)properties{
+  NSURLRequest* URLRequest = [self.replayAPIManager requestForEvent:eventName
+                                                         distinctId:distinctId
+                                                         properties:properties];
+  [self addReplayOperationForRequest:[ReplayRequest requestWithURLRequest:URLRequest]];
+}
+
+#pragma mark - Tracker State
+
+- (void)trackWithAPIKey:(NSString *)apiKey{
+  [self.replayAPIManager setAPIKey:apiKey
+                        clientUUID:[[[UIDevice currentDevice] identifierForVendor] UUIDString]
+                       sessionUUID:[ReplaySessionManager sessionUUID]];
+}
+
+- (void)enable {
+  DEBUG_LOG(@"Tracking = ON");
+  self.enabled = YES;
+  
+  if(!self.isPaused){
+    self.networkOperationQueue.suspended = NO;
+  }
+}
+
+- (void)disable {
+  DEBUG_LOG(@"Tracking = OFF");
+  self.enabled = NO;
+  self.networkOperationQueue.suspended = YES;
+}
+
+- (void)savePendingEventsToDisk{
+  self.paused = YES;
+  NSData* data = [self.requestQueue serializedQueue];
+  if(data){
+    [self.persistenceOperationQueue addOperationWithBlock:^{
+      [[NSUserDefaults standardUserDefaults] setObject:data forKey:REPLAY_PLIST_KEY];
+      [[NSUserDefaults standardUserDefaults] synchronize];
+      DEBUG_LOG(@"persisted events to disk");
+    }];
+  }else{
+    self.paused = NO;
+  }
+}
+
+#pragma mark - Private Interface
+
 - (void)setPaused:(BOOL)paused {
   if(_paused != paused){
     _paused = paused;
     if(_paused) {
-      self.replayOperationQueue.suspended = YES;
+      [self pause];
     }else{
-      self.replayOperationQueue.suspended = !self.enabled;
+      [self unpause];
     }
   }
 }
 
+- (void)addReplayOperationForRequest:(ReplayRequest*)request{
+  [self.requestQueue addRequest:request];
+  
+  NSOperation* replayNetworkOperation = [self networkOperationForRequest:request.networkRequest completion:^(NSURLResponse *response, NSError *error) {
+    if(!error){
+      [self.requestQueue removeRequest:request];
+    }
+  }];
+  
+  [self.networkOperationQueue addOperation:replayNetworkOperation];
+}
 
 #pragma mark - Framework initialization
 
@@ -105,45 +179,17 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
   [[ReplayIO sharedTracker].replayAPIManager updateSessionUUID:[ReplaySessionManager sessionUUID]];
 }
 
+#pragma mark - Network 
 
-#pragma mark - Convenience class methods
-
-+ (void)trackWithAPIKey:(NSString *)apiKey {
-  [[ReplayIO sharedTracker] trackWithAPIKey:apiKey];
+- (void)pause{
+  self.networkOperationQueue.suspended = YES;
 }
 
-+ (void)updateTraitsWithDistinctId:(NSString *)distinctId
-                        properties:(NSDictionary *)properties {
-  [[ReplayIO sharedTracker] updateTraitsWithDistinctId:distinctId
-                                            properties:properties];
+- (void)unpause{
+  self.networkOperationQueue.suspended = !self.isEnabled;
 }
 
-+ (void)trackEvent:(NSString *)eventName
-        distinctId:(NSString *)distinctId
-        properties:(NSDictionary *)properties {
-  [[ReplayIO sharedTracker] trackEvent:eventName distinctId:distinctId properties:properties];
-}
-
-+ (void)setDebugMode:(BOOL)debugMode {
-  [[ReplayIO sharedTracker] setDebugMode:debugMode];
-}
-
-+ (void)enable {
-  DEBUG_LOG(@"Tracking = ON");
-  [ReplayIO sharedTracker].enabled = YES;
-  
-  if(![ReplayIO sharedTracker].paused){
-   [ReplayIO sharedTracker].replayOperationQueue.suspended = NO;
-  }
-}
-
-+ (void)disable {
-  DEBUG_LOG(@"Tracking = OFF");
-  [ReplayIO sharedTracker].enabled = NO;
-  [ReplayIO sharedTracker].replayOperationQueue.suspended = YES;
-}
-
-+ (NSOperation*)networkOperationForRequest:(NSURLRequest*)request completion:(void(^)(NSURLResponse* response, NSError* error))completion{
+- (NSOperation*)networkOperationForRequest:(NSURLRequest*)request completion:(void(^)(NSURLResponse* response, NSError* error))completion{
   return [NSBlockOperation blockOperationWithBlock:^{
     NSURLResponse* response;
     NSError* error;
@@ -156,57 +202,6 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
   }];
 }
 
-
-#pragma mark - Underlying instance methods
-
-- (void)trackWithAPIKey:(NSString *)apiKey{
-  [self.replayAPIManager setAPIKey:apiKey
-                         clientUUID:[[[UIDevice currentDevice] identifierForVendor] UUIDString]
-                         sessionUUID:[ReplaySessionManager sessionUUID]];
-}
-
-- (void)updateTraitsWithDistinctId:(NSString *)distinctId
-                        properties:(NSDictionary *)properties{
-  NSURLRequest* URLRequest = [self.replayAPIManager requestForTraitsWithDistinctId:distinctId
-                                                                        properties:properties];
-  [self addReplayOperationForRequest:[ReplayRequest requestWithURLRequest:URLRequest]];
-}
-
-- (void)trackEvent:(NSString *)eventName
-        distinctId:(NSString *)distinctId
-        properties:(NSDictionary *)properties{
-  NSURLRequest* URLRequest = [self.replayAPIManager requestForEvent:eventName
-                                                         distinctId:distinctId
-                                                         properties:properties];
-  [self addReplayOperationForRequest:[ReplayRequest requestWithURLRequest:URLRequest]];
-}
-
-- (void)addReplayOperationForRequest:(ReplayRequest*)request{
-  [self.replayQueue addRequest:request];
-  
-  NSOperation* replayNetworkOperation = [[self class] networkOperationForRequest:request.networkRequest completion:^(NSURLResponse *response, NSError *error) {
-    if(!error){
-      [self.replayQueue removeRequest:request];
-    }
-  }];
-  
-  [self.replayOperationQueue addOperation:replayNetworkOperation];
-}
-
-- (void)savePendingEventsToDisk{
-  self.paused = YES;
-  NSData* data = [self.replayQueue serializedQueue];
-  if(data){
-    [self.persistenceOperationQueue addOperationWithBlock:^{
-      [[NSUserDefaults standardUserDefaults] setObject:data forKey:REPLAY_PLIST_KEY];
-      [[NSUserDefaults standardUserDefaults] synchronize];
-      DEBUG_LOG(@"persisted events to disk");
-    }];
-  }else{
-    self.paused = NO;
-  }
-}
-
 - (void)loadPendingEventsFromDisk{
   self.paused = YES;
   [self.persistenceOperationQueue addOperationWithBlock:^{
@@ -217,7 +212,7 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
     
     ReplayRequestQueue* existingQueue = [ReplayRequestQueue requestQueueWithData:data];
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-      self.replayQueue = existingQueue;
+      self.requestQueue = existingQueue;
       self.paused = NO;
     }];
   }];
@@ -226,8 +221,8 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 - (void)reachabilityChanged:(NSNotification*)notification{
   if(self.reachability.isReachable){
     DEBUG_LOG(@"network is reachable");
-
-    for(ReplayRequest* request in self.replayQueue.requests){
+    
+    for(ReplayRequest* request in self.requestQueue.requests){
       [self addReplayOperationForRequest:request];
     }
   }else{
