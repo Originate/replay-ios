@@ -47,6 +47,7 @@ static NSUInteger numberOfItems = 100;
 }
 
 - (void)testQueueAppending{
+  [self.requestQueue clearQueue];
   for(NSUInteger i = 0; i < numberOfItems; i++){
     [self.requestQueue addRequest:[ReplayRequest requestWithURLRequest:[self sampleRequest]]];
     XCTAssertEqual(i + 1, self.requestQueue.requests.count);
