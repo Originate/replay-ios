@@ -25,6 +25,13 @@
   return requestQueue;
 }
 
+- (instancetype)init{
+  if(self = [super init]){
+    self.requestSet = [NSMutableSet set];
+  }
+  return self;
+}
+
 - (NSArray*)requests{
   return [self.requestSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
 }
