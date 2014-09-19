@@ -17,6 +17,7 @@
 + (instancetype)requestQueueWithData:(NSData*)data;
 
 - (void)addRequest:(ReplayRequest*)request;
+- (void)addRequests:(NSArray*)requests;
 - (void)removeRequest:(ReplayRequest*)request;
 - (void)mergeWithRequestQueue:(ReplayRequestQueue*)requestQueue;
 - (void)clearQueue;

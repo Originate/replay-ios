@@ -36,15 +36,19 @@
   return [self.requestSet.allObjects sortedArrayUsingSelector:@selector(compare:)];
 }
 
-- (void)addRequest:(ReplayRequest *)request{
+- (void)addRequest:(ReplayRequest*)request{
   [self.requestSet addObject:request];
 }
 
-- (void)removeRequest:(ReplayRequest *)request{
+- (void)addRequests:(NSArray*)requests{
+  [self.requestSet addObjectsFromArray:requests];
+}
+
+- (void)removeRequest:(ReplayRequest*)request{
   [self.requestSet removeObject:request];
 }
 
-- (void)mergeWithRequestQueue:(ReplayRequestQueue *)requestQueue{
+- (void)mergeWithRequestQueue:(ReplayRequestQueue*)requestQueue{
   [self.requestSet addObjectsFromArray:requestQueue.requests];
 }
 
