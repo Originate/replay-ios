@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class Reachability, ReplayRequest;
+@class ReplayRequest;
 
 @interface ReplayRequestQueue : NSObject
 
