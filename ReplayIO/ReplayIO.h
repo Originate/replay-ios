@@ -26,6 +26,4 @@
 - (void)enable;
 - (void)disable;
 
-- (void)savePendingEventsToDisk;
-
 @end

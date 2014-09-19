@@ -22,8 +22,11 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		34124A3619CB43AF00F5D582 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34124A3519CB43AF00F5D582 /* libsqlite3.0.dylib */; };
 		341E3CDD19B7B55900CFD26A /* ReplayRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 341E3CDB19B7B55900CFD26A /* ReplayRequest.h */; };
 		341E3CDE19B7B55900CFD26A /* ReplayRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 341E3CDC19B7B55900CFD26A /* ReplayRequest.m */; };
+		348EDE7A19C8CF0F004DC6D6 /* ReplayPersistenceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 348EDE7819C8CF0F004DC6D6 /* ReplayPersistenceController.h */; };
+		348EDE7B19C8CF0F004DC6D6 /* ReplayPersistenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 348EDE7919C8CF0F004DC6D6 /* ReplayPersistenceController.m */; };
 		9F1B804E18EC812800A47925 /* ReplayIOTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1B804D18EC812800A47925 /* ReplayIOTests.m */; };
 		9F1B805018EC863A00A47925 /* ReplayAPIManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1B804F18EC863A00A47925 /* ReplayAPIManagerTests.m */; };
 		9F2749F518F0C1EA00CE5238 /* ReplaySessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F2749F318F0C1EA00CE5238 /* ReplaySessionManager.h */; };
@@ -81,8 +84,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		34124A3519CB43AF00F5D582 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 		341E3CDB19B7B55900CFD26A /* ReplayRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayRequest.h; sourceTree = "<group>"; };
 		341E3CDC19B7B55900CFD26A /* ReplayRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayRequest.m; sourceTree = "<group>"; };
+		348EDE7819C8CF0F004DC6D6 /* ReplayPersistenceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayPersistenceController.h; sourceTree = "<group>"; };
+		348EDE7919C8CF0F004DC6D6 /* ReplayPersistenceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayPersistenceController.m; sourceTree = "<group>"; };
 		9F1B804D18EC812800A47925 /* ReplayIOTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayIOTests.m; sourceTree = "<group>"; };
 		9F1B804F18EC863A00A47925 /* ReplayAPIManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ReplayAPIManagerTests.m; path = ReplayIOTests/ReplayAPIManagerTests.m; sourceTree = SOURCE_ROOT; };
 		9F2749F318F0C1EA00CE5238 /* ReplaySessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaySessionManager.h; sourceTree = "<group>"; };
@@ -115,6 +121,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34124A3619CB43AF00F5D582 /* libsqlite3.0.dylib in Frameworks */,
 				9F83B53218E5FB1E0031A36B /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -165,6 +172,7 @@
 		9F83B53018E5FB1E0031A36B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				34124A3519CB43AF00F5D582 /* libsqlite3.0.dylib */,
 				9FB5CD6318F383EE00D4085C /* SystemConfiguration.framework */,
 				9F83B53118E5FB1E0031A36B /* Foundation.framework */,
 				9F83B53F18E5FB1E0031A36B /* XCTest.framework */,
@@ -184,6 +192,8 @@
 				9F53452318F336C900E73521 /* ReplayRequestQueue.m */,
 				341E3CDB19B7B55900CFD26A /* ReplayRequest.h */,
 				341E3CDC19B7B55900CFD26A /* ReplayRequest.m */,
+				348EDE7819C8CF0F004DC6D6 /* ReplayPersistenceController.h */,
+				348EDE7919C8CF0F004DC6D6 /* ReplayPersistenceController.m */,
 				9F2749F318F0C1EA00CE5238 /* ReplaySessionManager.h */,
 				9F2749F418F0C1EA00CE5238 /* ReplaySessionManager.m */,
 				9F4122BB18E8C67100FDDFFB /* ReplayConfig.h */,
@@ -236,6 +246,7 @@
 				341E3CDD19B7B55900CFD26A /* ReplayRequest.h in Headers */,
 				9F53452418F336C900E73521 /* ReplayRequestQueue.h in Headers */,
 				9F53452018F324EB00E73521 /* Reachability.h in Headers */,
+				348EDE7A19C8CF0F004DC6D6 /* ReplayPersistenceController.h in Headers */,
 				9F2749F518F0C1EA00CE5238 /* ReplaySessionManager.h in Headers */,
 				9F83B55E18E63FCF0031A36B /* ReplayIO.h in Headers */,
 			);
@@ -365,6 +376,7 @@
 			files = (
 				9F83B53918E5FB1E0031A36B /* ReplayIO.m in Sources */,
 				9F2749F618F0C1EA00CE5238 /* ReplaySessionManager.m in Sources */,
+				348EDE7B19C8CF0F004DC6D6 /* ReplayPersistenceController.m in Sources */,
 				341E3CDE19B7B55900CFD26A /* ReplayRequest.m in Sources */,
 				9F53452518F336C900E73521 /* ReplayRequestQueue.m in Sources */,
 				9F53452118F324EB00E73521 /* Reachability.m in Sources */,

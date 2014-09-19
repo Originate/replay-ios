@@ -13,6 +13,7 @@
 #import "ReplayRequestQueue.h"
 #import "ReplayRequest.h"
 #import "Reachability.h"
+#import "ReplayPersistenceController.h"
 
 
 static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
@@ -31,7 +32,6 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 @end
 
 @implementation ReplayIO
-
 
 #pragma mark - Public Interface
 
@@ -114,20 +114,6 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
   self.networkOperationQueue.suspended = YES;
 }
 
-- (void)savePendingEventsToDisk{
-  self.paused = YES;
-  NSData* data = [self.requestQueue serializedQueue];
-  if(data){
-    [self.persistenceOperationQueue addOperationWithBlock:^{
-      [[NSUserDefaults standardUserDefaults] setObject:data forKey:REPLAY_PLIST_KEY];
-      [[NSUserDefaults standardUserDefaults] synchronize];
-      DEBUG_LOG(@"persisted events to disk");
-    }];
-  }else{
-    self.paused = NO;
-  }
-}
-
 #pragma mark - Private Interface
 
 - (void)setPaused:(BOOL)paused {
@@ -144,9 +130,12 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 - (void)addReplayOperationForRequest:(ReplayRequest*)request{
   [self.requestQueue addRequest:request];
   
+  [[ReplayPersistenceController sharedPersistenceController] persistRequest:request onCompletion:nil];
+  
   NSOperation* replayNetworkOperation = [self networkOperationForRequest:request.networkRequest completion:^(NSURLResponse *response, NSError *error) {
     if(!error){
-      [self.requestQueue removeRequest:request];
+    //  [self.requestQueue removeRequest:request];
+    //  [[ReplayPersistenceController sharedPersistenceController] removeRequest:request];
     }
   }];
   
@@ -204,17 +193,9 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 
 - (void)loadPendingEventsFromDisk{
   self.paused = YES;
-  [self.persistenceOperationQueue addOperationWithBlock:^{
-    NSData* data = [[NSUserDefaults standardUserDefaults] objectForKey:REPLAY_PLIST_KEY];
-    if(data){
-      DEBUG_LOG(@"Found existing queue of Replay events");
-    }
-    
-    ReplayRequestQueue* existingQueue = [ReplayRequestQueue requestQueueWithData:data];
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-      self.requestQueue = existingQueue;
-      self.paused = NO;
-    }];
+  [[ReplayPersistenceController sharedPersistenceController] fetchAllRequests:^(NSArray *replayRequests) {
+    [self.requestQueue addRequests:replayRequests];
+    self.paused = NO;
   }];
 }
 
