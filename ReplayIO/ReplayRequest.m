@@ -59,4 +59,8 @@ static NSString* const ReplayRequestCreateDateKey = @"createDate";
   return [self.createDate isEqualToDate:request.createDate];
 }
 
+- (NSString*)debugDescription{
+  return [NSString stringWithFormat:@"(ReplayRequest %p): %@ %@", self, self.createDate, self.networkRequest];
+}
+
 @end
