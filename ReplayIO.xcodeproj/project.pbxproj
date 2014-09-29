@@ -27,6 +27,9 @@
 		341E3CDE19B7B55900CFD26A /* ReplayRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 341E3CDC19B7B55900CFD26A /* ReplayRequest.m */; };
 		348EDE7A19C8CF0F004DC6D6 /* ReplayPersistenceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 348EDE7819C8CF0F004DC6D6 /* ReplayPersistenceController.h */; };
 		348EDE7B19C8CF0F004DC6D6 /* ReplayPersistenceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 348EDE7919C8CF0F004DC6D6 /* ReplayPersistenceController.m */; };
+		34E5C3B019D9C9F9001CE3EC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34E5C3AF19D9C9F9001CE3EC /* libsqlite3.dylib */; };
+		34E5C3B119D9CA07001CE3EC /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34124A3519CB43AF00F5D582 /* libsqlite3.0.dylib */; };
+		34E5C3B319D9CA56001CE3EC /* ReplayPersistenceControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 34E5C3B219D9CA56001CE3EC /* ReplayPersistenceControllerTests.m */; };
 		9F1B804E18EC812800A47925 /* ReplayIOTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1B804D18EC812800A47925 /* ReplayIOTests.m */; };
 		9F1B805018EC863A00A47925 /* ReplayAPIManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1B804F18EC863A00A47925 /* ReplayAPIManagerTests.m */; };
 		9F2749F518F0C1EA00CE5238 /* ReplaySessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F2749F318F0C1EA00CE5238 /* ReplaySessionManager.h */; };
@@ -89,6 +92,8 @@
 		341E3CDC19B7B55900CFD26A /* ReplayRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayRequest.m; sourceTree = "<group>"; };
 		348EDE7819C8CF0F004DC6D6 /* ReplayPersistenceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplayPersistenceController.h; sourceTree = "<group>"; };
 		348EDE7919C8CF0F004DC6D6 /* ReplayPersistenceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayPersistenceController.m; sourceTree = "<group>"; };
+		34E5C3AF19D9C9F9001CE3EC /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		34E5C3B219D9CA56001CE3EC /* ReplayPersistenceControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayPersistenceControllerTests.m; sourceTree = "<group>"; };
 		9F1B804D18EC812800A47925 /* ReplayIOTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReplayIOTests.m; sourceTree = "<group>"; };
 		9F1B804F18EC863A00A47925 /* ReplayAPIManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ReplayAPIManagerTests.m; path = ReplayIOTests/ReplayAPIManagerTests.m; sourceTree = SOURCE_ROOT; };
 		9F2749F318F0C1EA00CE5238 /* ReplaySessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaySessionManager.h; sourceTree = "<group>"; };
@@ -121,6 +126,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34E5C3B019D9C9F9001CE3EC /* libsqlite3.dylib in Frameworks */,
 				34124A3619CB43AF00F5D582 /* libsqlite3.0.dylib in Frameworks */,
 				9F83B53218E5FB1E0031A36B /* Foundation.framework in Frameworks */,
 			);
@@ -130,6 +136,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34E5C3B119D9CA07001CE3EC /* libsqlite3.0.dylib in Frameworks */,
 				9FB5CD6418F383EE00D4085C /* SystemConfiguration.framework in Frameworks */,
 				9F83B54618E5FB1E0031A36B /* libReplayIO.a in Frameworks */,
 				9F83B54018E5FB1E0031A36B /* XCTest.framework in Frameworks */,
@@ -172,6 +179,7 @@
 		9F83B53018E5FB1E0031A36B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				34E5C3AF19D9C9F9001CE3EC /* libsqlite3.dylib */,
 				34124A3519CB43AF00F5D582 /* libsqlite3.0.dylib */,
 				9FB5CD6318F383EE00D4085C /* SystemConfiguration.framework */,
 				9F83B53118E5FB1E0031A36B /* Foundation.framework */,
@@ -216,6 +224,7 @@
 			isa = PBXGroup;
 			children = (
 				9F1B804D18EC812800A47925 /* ReplayIOTests.m */,
+				34E5C3B219D9CA56001CE3EC /* ReplayPersistenceControllerTests.m */,
 				9F1B804F18EC863A00A47925 /* ReplayAPIManagerTests.m */,
 				9F2749F718F0C20C00CE5238 /* ReplaySessionManagerTests.m */,
 				9F53452618F3392300E73521 /* ReplayRequestQueueTests.m */,
@@ -392,6 +401,7 @@
 				9F2749F818F0C20C00CE5238 /* ReplaySessionManagerTests.m in Sources */,
 				9F53452718F3392300E73521 /* ReplayRequestQueueTests.m in Sources */,
 				9F1B805018EC863A00A47925 /* ReplayAPIManagerTests.m in Sources */,
+				34E5C3B319D9CA56001CE3EC /* ReplayPersistenceControllerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

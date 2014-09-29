@@ -11,6 +11,7 @@
 @class ReplayRequest;
 
 typedef void(^ReplayPersistenceControllerCompletion)();
+typedef void(^ReplayPersistenceControllerDatabaseReady)(BOOL isDatabaseReady);
 typedef void(^ReplayPersistentControllerRequestFetchCompletion)(NSArray* replayRequests);
 
 @interface ReplayPersistenceController : NSObject
@@ -19,5 +20,7 @@ typedef void(^ReplayPersistentControllerRequestFetchCompletion)(NSArray* replayR
 - (void)persistRequest:(ReplayRequest*)request onCompletion:(ReplayPersistenceControllerCompletion)completionBlock;
 - (void)removeRequest:(ReplayRequest*)request;
 - (void)fetchAllRequests:(ReplayPersistentControllerRequestFetchCompletion)completion;
+- (BOOL)deleteDatabase:(NSError*__autoreleasing*)error;
+- (void)callBlockWhenDatabaseIsReady:(ReplayPersistenceControllerDatabaseReady)completionBlock;
 
 @end

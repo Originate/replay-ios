@@ -12,12 +12,15 @@
 
 
 typedef BOOL(^ReplayPersistenceControllerSQLBlock)(sqlite3* database);
-const NSString* replayEventStoreFileName = @"replay_event_store.db";
+const NSString* ReplayEventStoreFileName = @"replay_event_store.db";
 
 @interface ReplayPersistenceController ()
 
 @property (nonatomic, readwrite, strong) NSOperationQueue* persistenceQueue;
 @property (nonatomic, readwrite, assign) sqlite3* database;
+@property (nonatomic, readwrite, strong) NSMutableArray* databaseReadyBlocks;
+@property (nonatomic, readwrite, assign, getter = isDatabaseReady) BOOL databaseReady;
+@property (nonatomic, readwrite, assign) BOOL databaseWillNotBeReady;
 
 @end
 
@@ -46,6 +49,42 @@ const NSString* replayEventStoreFileName = @"replay_event_store.db";
   return self;
 }
 
+- (void)callBlockWhenDatabaseIsReady:(ReplayPersistenceControllerDatabaseReady)completionBlock{
+  NSParameterAssert(completionBlock);
+  
+  if(!self.databaseReadyBlocks){
+    self.databaseReadyBlocks = [NSMutableArray array];
+  }
+  
+  if(self.isDatabaseReady){
+    completionBlock(YES);
+  }else if(self.databaseWillNotBeReady){
+    completionBlock(NO);
+  }else{
+    [self.databaseReadyBlocks addObject:completionBlock];
+  }
+}
+
+- (void)flushDatabaseReadyBlocks:(BOOL)isDatabaseReady{
+  for(ReplayPersistenceControllerDatabaseReady completionBlock in self.databaseReadyBlocks){
+    completionBlock(isDatabaseReady);
+  }
+}
+
+- (void)setDatabaseReady:(BOOL)databaseReady{
+  _databaseReady = databaseReady;
+  if(_databaseReady){
+    [self flushDatabaseReadyBlocks:YES];
+  }
+}
+
+- (void)setDatabaseWillNotBeReady:(BOOL)databaseWillNotBeReady{
+  _databaseWillNotBeReady = databaseWillNotBeReady;
+  if(_databaseWillNotBeReady){
+    [self flushDatabaseReadyBlocks:NO];
+  }
+}
+
 - (void)dealloc{
   sqlite3_close(self.database);
 }
@@ -57,14 +96,17 @@ const NSString* replayEventStoreFileName = @"replay_event_store.db";
   BOOL databaseExists = [[NSFileManager defaultManager] fileExistsAtPath:[self eventStoreFilePath]];
   int databaseFlags = SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE;
   int status = sqlite3_open_v2([[self eventStoreFilePath] UTF8String], &databaseConnection, databaseFlags, NULL);
-  BOOL openedSuccessfully = status == SQLITE_OK;
+  BOOL openedSuccessfully = (status == SQLITE_OK);
   if(openedSuccessfully){
     self.database = databaseConnection;
     if(!databaseExists){
       [self setupEventTable];
+    }else{
+      self.databaseReady = YES;
     }
   }else{
     DEBUG_LOG(@"Failed to open database, will not persist events to disk");
+    self.databaseWillNotBeReady = YES;
   }
 }
 
@@ -73,14 +115,17 @@ const NSString* replayEventStoreFileName = @"replay_event_store.db";
   BOOL createdSuccessfully = [self performSQLQuery:SQLQuery];
   if(!createdSuccessfully){
     NSString* errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(self.database)];
-    NSLog(@"Error opening database: %@", errorMessage);
+    DEBUG_LOG(@"Error opening database: %@", errorMessage);
+    self.databaseWillNotBeReady = YES;
+  }else{
+    self.databaseReady = YES;
   }
   
 }
 
 - (NSString*)eventStoreFilePath{
   NSString* documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
-  return [documentsPath stringByAppendingString:[NSString stringWithFormat:@"/%@", replayEventStoreFileName]];
+  return [documentsPath stringByAppendingString:[NSString stringWithFormat:@"/%@", ReplayEventStoreFileName]];
 }
 
 - (void)persistRequest:(ReplayRequest*)request onCompletion:(ReplayPersistenceControllerCompletion)completionBlock{
@@ -93,42 +138,39 @@ const NSString* replayEventStoreFileName = @"replay_event_store.db";
     NSString* errorMessage;
     __block sqlite3_stmt *statement;
     
-    ReplayPersistenceControllerSQLBlock prepareSatatement = ^BOOL(sqlite3 *database) {
-      return sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK;
+    ReplayPersistenceControllerSQLBlock prepareStatement = ^BOOL(sqlite3 *database) {
+      return (sqlite3_prepare_v2(database, query, -1, &statement, NULL) == SQLITE_OK);
     };
     
     ReplayPersistenceControllerSQLBlock bindID = ^BOOL(sqlite3 *database) {
-      return sqlite3_bind_int64(statement, 1, requestHash) == SQLITE_OK;
+      return (sqlite3_bind_int64(statement, 1, requestHash) == SQLITE_OK);
     };
     
     ReplayPersistenceControllerSQLBlock bindData = ^BOOL(sqlite3 *database) {
-      return sqlite3_bind_blob(statement, 2, [requestData bytes], [requestData length], SQLITE_STATIC) == SQLITE_OK;
+      return (sqlite3_bind_blob(statement, 2, [requestData bytes], (int)[requestData length], SQLITE_STATIC) == SQLITE_OK);
     };
     
     ReplayPersistenceControllerSQLBlock execute = ^BOOL(sqlite3 *database) {
-      return sqlite3_step(statement) == SQLITE_DONE;
+      return (sqlite3_step(statement) == SQLITE_DONE);
     };
     
     ReplayPersistenceControllerSQLBlock finish = ^BOOL(sqlite3 *database) {
-      return sqlite3_finalize(statement) == SQLITE_OK;
+      return (sqlite3_finalize(statement) == SQLITE_OK);
     };
     
     BOOL success = YES;
-    NSArray* SQLOperations = @[prepareSatatement, bindID, bindData, execute, finish];
-    {int i = 0; for(ReplayPersistenceControllerSQLBlock SQLOperation in SQLOperations){
+    NSArray* SQLOperations = @[prepareStatement, bindID, bindData, execute, finish];
+    for(ReplayPersistenceControllerSQLBlock SQLOperation in SQLOperations){
       success = [self performSQLOperation:SQLOperation onDatabase:self.database errorMessage:&errorMessage];
       if(!success){
         break;
       }
-      i++;
-    }}
+    }
     
     if(success){
       if(completionBlock){
         [[NSOperationQueue mainQueue] addOperationWithBlock:completionBlock];
       }
-    }else{
-      NSLog(@"");
     }
   }];
 }
@@ -163,7 +205,7 @@ const NSString* replayEventStoreFileName = @"replay_event_store.db";
         }
       }
       sqlite3_finalize(statement);
-      
+      NSLog(@"Fetch done");
       [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         completion(results.copy);
       }];
@@ -180,15 +222,26 @@ const NSString* replayEventStoreFileName = @"replay_event_store.db";
   [self.persistenceQueue addOperationWithBlock:^{
     const char* query = "DELETE FROM events WHERE EVENT_ID = ?";
     sqlite3_stmt* statement;
-    sqlite3_prepare16_v2(self.database, query, -1, &statement, NULL);
-    sqlite3_bind_int64(statement, 0, request.hash);
+    sqlite3_prepare_v2(self.database, query, -1, &statement, NULL);
+    sqlite3_bind_int(statement, 0, (int)request.hash);
     int status = sqlite3_step(statement);
     BOOL success = status == SQLITE_DONE;
+    sqlite3_finalize(statement);
     if(!success){
       NSString* errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(self.database)];
       DEBUG_LOG(@"Error removing request:\n Error: %@ | Request: %@", errorMessage, request);
     }
   }];
+}
+
+- (BOOL)deleteDatabase:(NSError* __autoreleasing *)error{
+  BOOL databaseExists = [[NSFileManager defaultManager] fileExistsAtPath:[self eventStoreFilePath]];
+  if(databaseExists){
+    BOOL success = [[NSFileManager defaultManager] removeItemAtPath:[self eventStoreFilePath] error:error];
+    self.database = NULL;
+    return success;
+  }
+  return YES;
 }
 
 - (BOOL)performSQLQuery:(NSString*)query{
