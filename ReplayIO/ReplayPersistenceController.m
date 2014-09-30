@@ -93,17 +93,12 @@ const NSString* ReplayEventStoreFileName = @"replay_event_store.db";
 
 - (void)setupDatabaseConnection{
   sqlite3* databaseConnection = NULL;
-  BOOL databaseExists = [[NSFileManager defaultManager] fileExistsAtPath:[self eventStoreFilePath]];
   int databaseFlags = SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE;
   int status = sqlite3_open_v2([[self eventStoreFilePath] UTF8String], &databaseConnection, databaseFlags, NULL);
   BOOL openedSuccessfully = (status == SQLITE_OK);
   if(openedSuccessfully){
     self.database = databaseConnection;
-    if(!databaseExists){
-      [self setupEventTable];
-    }else{
-      self.databaseReady = YES;
-    }
+    [self setupEventTable];
   }else{
     DEBUG_LOG(@"Failed to open database, will not persist events to disk");
     self.databaseWillNotBeReady = YES;
@@ -111,7 +106,7 @@ const NSString* ReplayEventStoreFileName = @"replay_event_store.db";
 }
 
 - (void)setupEventTable{
-  NSString* SQLQuery = @"create table events(event_id integer, event_data blob)";
+  NSString* SQLQuery = @"create table if not exists events(event_id integer, event_data blob)";
   BOOL createdSuccessfully = [self performSQLQuery:SQLQuery];
   if(!createdSuccessfully){
     NSString* errorMessage = [NSString stringWithUTF8String:sqlite3_errmsg(self.database)];
@@ -220,10 +215,10 @@ const NSString* ReplayEventStoreFileName = @"replay_event_store.db";
   }
   
   [self.persistenceQueue addOperationWithBlock:^{
-    const char* query = "DELETE FROM events WHERE EVENT_ID = ?";
+    const char* query = "DELETE FROM events WHERE event_id = (?)";
     sqlite3_stmt* statement;
     sqlite3_prepare_v2(self.database, query, -1, &statement, NULL);
-    sqlite3_bind_int(statement, 0, (int)request.hash);
+    sqlite3_bind_int(statement, 1, (int)request.hash);
     int status = sqlite3_step(statement);
     BOOL success = status == SQLITE_DONE;
     sqlite3_finalize(statement);
