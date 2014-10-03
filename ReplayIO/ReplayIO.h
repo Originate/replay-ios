@@ -10,26 +10,20 @@
 
 @interface ReplayIO : NSObject
 
-@property (nonatomic) BOOL debugMode;
+@property (nonatomic, readwrite, assign, getter = isDebugMode) BOOL debugMode; // NOTE: maybe getter should be something like `isDebugMode`
 
 // ReplayIO singleton object
 + (ReplayIO *)sharedTracker;
 
 // Instantiation
-+ (void)trackWithAPIKey:(NSString *)apiKey;
+- (void)trackWithAPIKey:(NSString *)apiKey;
 
 // Endpoint methods
-+ (void)trackEvent:(NSString *)eventName distinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
-+ (void)updateTraitsWithDistinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
-
-// Dispatch
-+ (void)setDispatchInterval:(NSInteger)interval;
-+ (void)dispatch;
+- (void)trackEvent:(NSString *)eventName distinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
+- (void)updateTraitsWithDistinctId:(NSString *)distinctId properties:(NSDictionary *)properties;
 
 // Enable/disable
-+ (void)enable;
-+ (void)disable;
-
-+ (void)setDebugMode:(BOOL)debugMode;
+- (void)enable;
+- (void)disable;
 
 @end

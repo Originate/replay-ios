@@ -12,10 +12,10 @@
 
 @property (nonatomic, strong, readonly) NSString* apiKey;
 @property (nonatomic, strong, readonly) NSString* clientUUID;
-@property (nonatomic, strong, readonly) NSString* sessionUUID;
+@property (nonatomic, strong, readonly) NSString* sessionUUID; // NOTE: why are these readonly if you can mutate them through -setAPIKey:clientUUID:sessionUUID:? Why not set those through an initializer?
 
 - (void)setAPIKey:(NSString *)apiKey clientUUID:(NSString *)clientUUID sessionUUID:(NSString *)sessionUUID;
-- (void)updateSessionUUID:(NSString *)sessionUUID;
+- (void)updateSessionUUID:(NSString *)sessionUUID; // NOTE: why isn't sessionUUID readwrite?
 
 - (NSURLRequest *)requestForEvent:(NSString *)eventName
                        distinctId:(NSString *)distinctId

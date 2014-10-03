@@ -9,10 +9,10 @@
 
 // Custom macros
 
-#define DEBUG_LOG(fmt, ...) do {                 \
+#define DEBUG_LOG(fmt, ...) {                 \
   if ([ReplayIO sharedTracker].debugMode) {      \
     NSLog(@"[Replay.IO] " fmt, ## __VA_ARGS__);  \
   }                                              \
-} while(0);
+}
 
 #define ERROR_DOMAIN_REPLAY_IO @"com.originate.replayio"
