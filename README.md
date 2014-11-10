@@ -4,6 +4,16 @@ Building this project will produce `ReplayIO.framework`, which can then be distr
 
 ## Documentation for framework developers
 
+### Notes
+
+Since ReplayIO includes dependencies, there may be conflicts if the host app is also dependent on the same things we are. Instead of forcing the clients of our SDK to include further dependencies, we rename any symbols that might conflict.
+
+You can rename symbols at compile time by adding a flag to the “Other C Flags” section of the Build Settings for the project.
+
+Ex.
+
+-D[Existing Symbol]=[New Symbol Name]
+
 ### How to build the framework
 
 The project settings and configurations needed to create the framework were taken from this handy [iOS Framework tutorial](https://github.com/jverkoey/iOS-Framework). One additional setting missed by the tutorial is ensuring that **Build Active Architectures=*No***.

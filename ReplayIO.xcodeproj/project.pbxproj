@@ -508,6 +508,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ReplayIO/ReplayIO-Prefix.pch";
 				ONLY_ACTIVE_ARCH = NO;
+				"OTHER_CFLAGS[arch=*]" = (
+					"-DReachability=ReplayReachability",
+					"-DkReachabilityChangedNotification=kReplayReachabilityChangedNotification",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(PROJECT_NAME)Headers";
@@ -524,6 +528,10 @@
 				DSTROOT = /tmp/ReplayIO.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ReplayIO/ReplayIO-Prefix.pch";
+				OTHER_CFLAGS = (
+					"-DReachability=ReplayReachability",
+					"-DkReachabilityChangedNotification=kReplayReachabilityChangedNotification",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "$(PROJECT_NAME)Headers";
