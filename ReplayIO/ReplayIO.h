@@ -10,7 +10,7 @@
 
 @interface ReplayIO : NSObject
 
-@property (nonatomic, readwrite, assign, getter = isDebugMode) BOOL debugMode
+@property (nonatomic, readwrite, assign, getter = isDebugMode) BOOL debugMode;
 
 // ReplayIO singleton object
 + (ReplayIO *)sharedTracker;
