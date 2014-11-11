@@ -97,12 +97,12 @@
                     properties:(NSDictionary *)properties
 {
   NSDictionary* json =
-    @{kReplayKey   : self.apiKey,
-      kClientId    : self.clientUUID,
-      kSessionId   : self.sessionUUID,
-      kDistinctId  : distinctId ?: @"",
-      kProperties  : properties ?: @{},
-      @"event_name": eventName ?: @""};
+    @{kReplayKey: self.apiKey,
+      kClientId: self.clientUUID,
+      kSessionId: self.sessionUUID,
+      kDistinctId: distinctId ?: @"",
+      kProperties: properties ?: @{},
+      kEventName: eventName ?: @""};
 
 
   return json;
@@ -112,9 +112,9 @@
                                    properties:(NSDictionary *)properties
 {
   NSDictionary* json =
-    @{kReplayKey : self.apiKey,
-      kClientId  : self.clientUUID,
-      kSessionId : self.sessionUUID,
+    @{kReplayKey: self.apiKey,
+      kClientId: self.clientUUID,
+      kSessionId: self.sessionUUID,
       kDistinctId: distinctId ?: @"",
       kProperties: properties ?: @{}};
   

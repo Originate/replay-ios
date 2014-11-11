@@ -15,6 +15,7 @@
 #define kSessionId  @"session_id"
 #define kDistinctId @"distinct_id"
 #define kProperties @"properties"
+#define kEventName @"event_name"
 
 // Replay.IO server url
 static NSString* const REPLAY_URL  = @"http://0.0.0.0:3000/"; //@"http://10.0.60.43:3000/";
