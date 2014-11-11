@@ -12,7 +12,7 @@ You can rename symbols at compile time by adding a flag to the â€œOther C Flagsâ
 
 Ex.
 
--D[Existing Symbol]=[New Symbol Name]
+`-D[Existing Symbol]=[New Symbol Name]`
 
 ### How to build the framework
 
