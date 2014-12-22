@@ -2,7 +2,7 @@
 
 ## Quick Start
 
-In order to integrate Replay you’ll need to download the .framework from [link goes here]. Once downloaded, drag and drop it into your Xcode project (and make sure you’re linking against it). Also link against SystemConfiguration.framework Replay is dependant on SQLite for persisting events when the network is not reachable, so you will need to link against libsqlite3.0.dylib as well.
+In order to integrate Replay you’ll need to download the .framework from [link goes here]. Once downloaded, drag and drop it into your Xcode project (and make sure you’re linking against it). Also link against SystemConfiguration.framework Replay is dependant on SQLite for persisting events when the network is not reachable, so you will need to link against libsqlite3.dylib as well.
 
 Once you’ve linked against Replay and SQLite your project should build again. In order to use Replay you’ll need to supply us your API key through the -trackWithAPIKey: method. Call that on the +sharedTracker and you’ll be ready to track events.
 
