@@ -202,11 +202,8 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 }
 
 - (void)loadPendingEventsFromDisk{
-  BOOL wasPaused = self.paused;
-  self.paused = YES;
   [[ReplayPersistenceController sharedPersistenceController] fetchAllRequests:^(NSArray *replayRequests) {
     [self.requestQueue addRequests:replayRequests];
-    self.paused = wasPaused;
     [self fireQueuedRequests];
   }];
 }
