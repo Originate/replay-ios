@@ -59,9 +59,6 @@ Possible TODOs:
 
 We have tests, write and use them! Xcode 5 seems to have [removed](http://stackoverflow.com/questions/20605509/how-do-i-automatically-perform-unit-tests-on-each-build-and-run-action-in-xcod) the option to automatically test after building.
 
-### TODOs:
-* OCMock testing
-
 ## Documentation for framework users
 
 The framework lives as a singleton in your app. For convenience, all instance methods have class method counterparts, so there's no need to first obtain the global instance `[ReplayIO sharedTracker]`.
