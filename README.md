@@ -93,13 +93,13 @@ The framework lives as a singleton in your app. For convenience, all instance me
 ### Debugging
 
 ```obj-c
-[ReplayIO setDebugMode:YES];
+[[ReplayIO sharedTracker] setDebugMode:YES];
 ```
 
 ### Enable/disable
 
 ```obj-c
-[ReplayIO enable];
-[ReplayIO disable];
+[[ReplayIO sharedTracker] enable];
+[[ReplayIO sharedTracker] disable];
 ```
 
