@@ -76,12 +76,12 @@ The framework lives as a singleton in your app. For convenience, all instance me
 
 4. Initialize the tracker
 
-	```[ReplayIO trackWithAPIKey:@"Your API Key"];```
+	```[[ReplayIO sharedTracker] trackWithAPIKey:@"Your API Key"];```
 	
 ### Tracking Events
 
 ```obj-c
-[ReplayIO trackEvent:@"Event name"
+[[ReplayIO sharedTracker] trackEvent:@"Event name"
           distinctId:@"A distinct string that identifies the user"
           properties:@{@"key": @"value"}];
 ```
@@ -89,7 +89,7 @@ The framework lives as a singleton in your app. For convenience, all instance me
 ### Set Traits
 
 ```obj-c
-[ReplayIO updateTraitsWithDistinctId:@"A distinct string that identifies the user"
+[[ReplayIO sharedTracker] updateTraitsWithDistinctId:@"A distinct string that identifies the user"
                           properties:@{@"key": @"value"}];
 ```
 
@@ -106,20 +106,3 @@ The framework lives as a singleton in your app. For convenience, all instance me
 [ReplayIO disable];
 ```
 
-### Dispatching
-
-By default, ReplayIO will dispatch event data as soon as the `trackEvent:distinctId:properties:` method is called. You can choose to dispatch data periodically as well by modifying the dispatch interval. Specifying a negative interval will disable periodic dispatch.
-
-```obj-c
-[ReplayIO setDispatchInterval:120];  // dispatch every 2 minutes
-```
-
-```obj-c
-[ReplayIO setDispatchInterval:-1];   // disable periodic dispatch
-...
-[ReplayIO dispatch]                  // dispatch manually
-```
-
-```obj-c
-[ReplayIO setDispatchInterval:0];    // dispatch immediately (default)
-```
