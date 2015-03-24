@@ -66,7 +66,9 @@ The framework lives as a singleton in your app. For convenience, all instance me
 ### Installation
 
 1. Add *ReplayIO.framework* to your project
-2. Add *SystemConfiguration.framework* under "Link Binary With Libraries" section of "Build Phases"
+2. Add the following under the "Link Binary With Libraries" section of "Build Phases"
+    * SystemConfiguration.framework
+    * libsqlite3.dylib
 3. Import the header file
  
 	```#import <ReplayIO/ReplayIO.h>```
