@@ -128,18 +128,28 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 }
 
 - (void)addReplayOperationForRequest:(ReplayRequest*)request{
-  [self.requestQueue addRequest:request];
-  
-  [[ReplayPersistenceController sharedPersistenceController] persistRequest:request onCompletion:nil];
+  if(!self.reachability.isReachable){ // Only queue requests if we're not reachable
+    [self queueReplayRequest:request];
+    return;
+  }
   
   NSOperation* replayNetworkOperation = [self networkOperationForRequest:request.networkRequest completion:^(NSURLResponse *response, NSError *error) {
     if(!error){
-    //  [self.requestQueue removeRequest:request];
-    //  [[ReplayPersistenceController sharedPersistenceController] removeRequest:request];
+      [self.requestQueue removeRequest:request];
+     [[ReplayPersistenceController sharedPersistenceController] removeRequest:request];
     }
   }];
   
   [self.networkOperationQueue addOperation:replayNetworkOperation];
+}
+
+- (void)queueReplayRequest:(ReplayRequest*)request{
+  if(!self.reachability.isReachable){
+    return;
+  }
+  
+  [self.requestQueue addRequest:request];
+  [[ReplayPersistenceController sharedPersistenceController] persistRequest:request onCompletion:nil];
 }
 
 #pragma mark - Framework initialization
@@ -192,20 +202,29 @@ static NSString* const REPLAY_PLIST_KEY = @"ReplayIO.savedRequestQueue";
 }
 
 - (void)loadPendingEventsFromDisk{
-  self.paused = YES;
   [[ReplayPersistenceController sharedPersistenceController] fetchAllRequests:^(NSArray *replayRequests) {
     [self.requestQueue addRequests:replayRequests];
-    self.paused = NO;
+    [self fireQueuedRequests];
   }];
+}
+
+- (void)fireQueuedRequests{
+  if(!self.reachability.isReachable){
+    return;
+  }
+  
+  for(ReplayRequest* request in self.requestQueue.requests){
+    [self addReplayOperationForRequest:request];
+  }
+  
+  [self.requestQueue clearQueue];
 }
 
 - (void)reachabilityChanged:(NSNotification*)notification{
   if(self.reachability.isReachable){
     DEBUG_LOG(@"Network is reachable");
     
-    for(ReplayRequest* request in self.requestQueue.requests){
-      [self addReplayOperationForRequest:request];
-    }
+    [self fireQueuedRequests];
   }else{
     DEBUG_LOG(@"Network is unreachable");
   }
